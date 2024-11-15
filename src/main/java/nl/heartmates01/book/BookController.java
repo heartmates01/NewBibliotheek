@@ -87,6 +87,7 @@ public class BookController {
           } else if (borrowOrReturn == 2) {
             showReturnBook(singularBookID);
           }
+          // why did i do it like this.
           break;
 
         case "4":
