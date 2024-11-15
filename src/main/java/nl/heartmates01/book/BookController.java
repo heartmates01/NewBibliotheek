@@ -170,6 +170,7 @@ public class BookController {
     Book book = bookRepository.findID(id);
     if (book != null) {
       book.borrowBook();
+      System.out.println("Book has been borrowed.");
     } else {
       System.out.println("Book not in list.");
     }
@@ -180,6 +181,7 @@ public class BookController {
     Book book = bookRepository.findID(id);
     if (book != null) {
       book.returnBook();
+      System.out.println("Book has been returned.");
     } else {
       System.out.println("Book not in list.");
     }
@@ -195,20 +197,18 @@ public class BookController {
   }
 
 
-  static String showBorrowedBooks() {
+  static void showBorrowedBooks() {
     String result = "";
     for (Book book : bookRepository.getBorrowedBooks()) {
-      return result + book.getTitleWithAuthor();
+      System.out.println(result + book.getTitleWithAuthor());
     }
-    return result;
   }
 
-  static String showAvailableBooks() {
+  static void showAvailableBooks() {
     String result = "";
     for (Book book : bookRepository.getAvailableBooks()) {
-      return result + book.getTitleWithAuthor();
+      System.out.println(result + book.getTitleWithAuthor());
     }
-    return result;
   }
 
 
@@ -225,6 +225,3 @@ public class BookController {
     }
     return scanner.nextLine();
   }
-
-
-}
