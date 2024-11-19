@@ -86,40 +86,54 @@ package nl.heartmates01;
 
 // Het belangrijkste is dat je kunt laten zien dat je weet hoe je met packages en encapsulation kan werken.
 
+import java.util.Scanner;
 import java.util.regex.Pattern;
 import nl.heartmates01.book.BookController;
+import nl.heartmates01.magazine.MagazineController;
 
-class NewBibliotheek {
 
-  public static class Main {
+public class Main {
 
-    public static void main(String[] args) {
+  public static void main(String[] args) {
 
-      while (true) {
-        System.out.println("""
-             \s
-             Library Management System
-             \s
-             1. Manage Books
-             2. Manage Magazines
-             3. Exit
-            """);
+    while (true) {
+      System.out.println("""
+           \s
+           Library Management System
+           \s
+           1. Manage Books
+           2. Manage Magazines
+           3. Exit
+          """);
 
-        String userFirstChoice = BookController.userInput("Choose an option from the list:",
-            Pattern.compile("[0-3]"),
-            "Choose a valid option");
+      String userFirstChoice = userInput("Choose an option from the list:",
+          Pattern.compile("[0-3]"),
+          "Choose a valid option");
 
-        switch (userFirstChoice) {
-          case "1":
-            BookController.showBookMenu();
-            break;
-          case "2":
-            System.out.println("still working on that");
-            break;
-          case "3":
-            return;
-        }
+      switch (userFirstChoice) {
+        case "1":
+          BookController.showBookMenu();
+          break;
+        case "2":
+          MagazineController.showMagazineMenu();
+          break;
+        case "3":
+          return;
       }
     }
+  }
+
+  static Scanner scanner = new Scanner(System.in);
+
+  public static String userInput(String question, Pattern pattern, String errorMessage) {
+    System.out.println(question);
+
+    if (pattern != null) {
+      while (!scanner.hasNext(pattern)) {
+        System.out.println(errorMessage);
+        scanner.next();
+      }
+    }
+    return scanner.nextLine();
   }
 }
