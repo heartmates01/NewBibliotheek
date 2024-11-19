@@ -41,8 +41,14 @@ public class WeeklyMag extends Magazine {
   }
 
   public int getWeekNumber() {
-    return 0;
+    return issueNumber;
   }
+
+  // Voor WeeklyMagazine: "Issn: {issn} - Title: {title} - Week: {weekNumber}"
+  public String getOverviewText() {
+    return "Issn: " + issn + "\nTitle: " + title + "\nWeek: " + getWeekNumber();
+  }
+}
 
   // Voor WeeklyMagazine: "Issn: {issn} - Title: {title} - Week: {weekNumber}"
   public String getOverviewtext() {
