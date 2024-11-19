@@ -38,8 +38,11 @@ public class Magazine extends Item {
     this.publicationDate = publicationDate;
   }
 
+  long getID() {
+    return id;
+  }
 
-  public String getOverviewtext() {
-    return "";
+  public String getOverviewText() {
+    return "ISSN: " + issn + "\nTitle: " + title + "\nIssue: " + issueNumber;
   }
 }
