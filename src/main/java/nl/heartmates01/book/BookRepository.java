@@ -3,6 +3,7 @@ package nl.heartmates01.book;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 class BookRepository {
 
@@ -35,34 +36,15 @@ class BookRepository {
 
   // methods zonder directe toegang tot Books
 
-  ArrayList<Book> getBooks() {
-    for (Book book : allBooks) {
-      getBooks().add(book);
-      return getBooks();
-    }
-    return null;
+  List<Book> getBooks() {
+    return allBooks;
   }
 
-  ArrayList<Book> getBorrowedBooks() {
-
-    for (Book book : allBooks) {
-      if (book.hasBeenBorrowed()) {
-        getBorrowedBooks().add(book);
-        return getBorrowedBooks();
-      }
-    }
-    return null;
+  List<Book> getBorrowedBooks() {
+    return allBooks.stream().filter(Book::hasBeenBorrowed).toList();
   }
 
-  ArrayList<Book> getAvailableBooks() {
-    for (Book book : allBooks) {
-      if (!book.hasBeenBorrowed()) {
-        getAvailableBooks().add(book);
-        return getAvailableBooks();
-      }
-    }
-    return null;
+  List<Book> getAvailableBooks() {
+    return allBooks.stream().filter(Predicate.not(Book::hasBeenBorrowed)).toList();
   }
 }
-
-
