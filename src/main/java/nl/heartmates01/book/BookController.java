@@ -1,9 +1,10 @@
 package nl.heartmates01.book;
 
 
+import static nl.heartmates01.Main.userInput;
+
 import java.time.LocalDate;
 import java.util.regex.Pattern;
-import java.util.Scanner;
 
 public class BookController {
 
@@ -66,28 +67,7 @@ public class BookController {
           break;
 
         case "3":
-          long singularBookID = Long.parseLong(
-              userInput("Book ID:", Pattern.compile("\\d{10}"), "Invalid ID."));
-          System.out.println("""
-              \s
-              Library Management System
-              \s
-              1. Borrow
-              2. Return
-              3. Exit to previous menu""");
-
-          int borrowOrReturn = Integer.parseInt(
-              userInput("Choose an option from the list.", Pattern.compile("[0-3]"),
-                  "Choose a valid option."));
-          if (borrowOrReturn == 3) {
-            System.out.println("Exiting to previous menu.");
-            return;
-          } else if (borrowOrReturn == 1) {
-            showBorrowBook(singularBookID);
-          } else if (borrowOrReturn == 2) {
-            showReturnBook(singularBookID);
-          }
-          // why did i do it like this.
+          handleBookActions();
           break;
 
         case "4":
@@ -100,6 +80,32 @@ public class BookController {
           System.out.println("Exiting to previous menu.");
           return;
       }
+    }
+  }
+
+  static void handleBookActions() {
+    long singularBookID = Long.parseLong(
+        userInput("Book ID:", Pattern.compile("\\d{10}"), "Invalid ID."));
+    System.out.println("""
+        \s
+        Library Management System
+        \s
+        1. Borrow
+        2. Return
+        3. Exit to previous menu""");
+
+    int borrowOrReturn = Integer.parseInt(
+        userInput("Choose an option from the list.", Pattern.compile("[0-3]"),
+            "Choose a valid option."));
+    if (borrowOrReturn == 3) {
+      System.out.println("Exiting to previous menu.");
+      handleSingularBook();
+
+    } else if (borrowOrReturn == 1) {
+      showBorrowBook(singularBookID);
+
+    } else if (borrowOrReturn == 2) {
+      showReturnBook(singularBookID);
     }
   }
 
@@ -211,18 +217,4 @@ public class BookController {
       System.out.println(result + book.getTitleWithAuthor());
     }
   }
-
-
-  static Scanner scanner = new Scanner(System.in);
-
-  public static String userInput(String question, Pattern pattern, String errorMessage) {
-    System.out.println(question);
-
-    if (pattern != null) {
-      while (!scanner.hasNext(pattern)) {
-        System.out.println(errorMessage);
-        scanner.next();
-      }
-    }
-    return scanner.nextLine();
-  }
+}
