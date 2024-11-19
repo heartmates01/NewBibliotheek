@@ -41,11 +41,12 @@ public class MonthlyMag extends Magazine {
   }
 
   public int getMonthNumber() {
-    return 0;
+    return issueNumber;
   }
 
   // Voor MonthlyMagazine: "Issn: {issn} - Title: {title} - Month: {monthNumber}"
-  public String getOverviewtext() {
-    return "Issn:" + issn + "Title:" + title + "Issue:" + issueNumber + "Month:" + getMonthNumber();
+  public String getOverviewText() {
+    return "Issn: " + issn + "\nTitle: " + title + "\nIssue: " + issueNumber + "\nMonth: "
+        + getMonthNumber();
   }
 }
