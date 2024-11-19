@@ -55,7 +55,7 @@ import nl.heartmates01.library.Item;
 
 
 // overerft Item
-class Book extends Item {
+public class Book extends Item {
 
   private final long id;
   private final String title;
@@ -79,8 +79,8 @@ class Book extends Item {
   }
 
   // Voor Book: "Isbn: {isbn} - Title: {title} - Author: {author}"
-  public String getOverviewtext() {
-    return "Isbn:" + isbn + "Title:" + title + "Author:" + author;
+  public String getOverviewText() {
+    return "Isbn: " + isbn + "\nTitle :" + title + "\nAuthor: " + author;
   }
 
   long getId() {
