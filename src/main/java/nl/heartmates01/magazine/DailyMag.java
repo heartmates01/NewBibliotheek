@@ -38,8 +38,7 @@ public class DailyMag extends Magazine {
   }
 
   // Voor DailyMagazine: "Issn: {issn} - Title: {title} - Issue: {issueNumber}"
-  public String getOverviewtext() {
-    return "Issn:" + issn + "Title:" + title + "Issue:" + issueNumber;
+  public String getOverviewText() {
+    return "Issn: " + issn + "\nTitle: " + title + "\nIssue: " + issueNumber;
   }
 }
-
