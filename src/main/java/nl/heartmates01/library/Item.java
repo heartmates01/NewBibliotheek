@@ -17,18 +17,18 @@ package nl.heartmates01.library;
 // Voor WeeklyMagazine: "Issn: {issn} - Title: {title} - Week: {weekNumber}"
 // Voor MonthlyMagazine: "Issn: {issn} - Title: {title} - Month: {monthNumber}"
 
-import java.time.LocalDate;
-
 // Maak een lijst met alle boeken en tijdschriften aan de hand van de Item class.
 // Haal uit de lijst van boeken en tijdschriften alle items
 // die zijn uitgeleend en gebruik voor de weergave de getOverviewText() methode.
 
 // Schrijf de code die de juiste uiterleentermijn terug geeft via de Item class.
 
+import java.time.LocalDate;
+
 public abstract class Item {
 
   protected Item(long id, String title, int pages, LocalDate publicationDate) {
   }
 
-  public abstract String getOverviewtext();
+  public abstract String getOverviewText();
 }
