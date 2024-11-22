@@ -19,19 +19,22 @@ public class DailyMag extends Magazine {
   private final String publisher;
   private final String copyEditor;
   private final int pages;
+  private boolean borrowed;
   private final String issn;
   private final int issueNumber;
   private final LocalDate publicationDate;
 
   protected DailyMag(long id, String title, String publisher, String copyEditor, int pages,
+      boolean borrowed,
       String issn, int issueNumber, LocalDate publicationDate) {
-    super(id, title, publisher, copyEditor, pages, issn, issueNumber, publicationDate);
+    super(id, title, publisher, copyEditor, pages, borrowed, issn, issueNumber, publicationDate);
 
     this.id = id;
     this.title = title;
     this.publisher = publisher;
     this.copyEditor = copyEditor;
     this.pages = pages;
+    this.borrowed = borrowed;
     this.issn = issn;
     this.issueNumber = issueNumber;
     this.publicationDate = publicationDate;
@@ -39,6 +42,7 @@ public class DailyMag extends Magazine {
 
   // Voor DailyMagazine: "Issn: {issn} - Title: {title} - Issue: {issueNumber}"
   public String getOverviewText() {
-    return "Issn: " + issn + "\nTitle: " + title + "\nIssue: " + issueNumber;
+    return "\nIssn: " + issn + "\nTitle: " + title + "\nIssue: " + issueNumber + "\nBorrowed: "
+        + borrowed;
   }
 }
