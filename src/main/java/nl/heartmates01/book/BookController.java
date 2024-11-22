@@ -1,6 +1,5 @@
 package nl.heartmates01.book;
 
-
 import static nl.heartmates01.Main.userInput;
 
 import java.time.LocalDate;
@@ -42,7 +41,7 @@ public class BookController {
     }
   }
 
-  static void handleSingularBook() {
+  public static void handleSingularBook() {
     while (true) {
       System.out.println("""
           \s
@@ -83,7 +82,8 @@ public class BookController {
     }
   }
 
-  static void handleBookActions() {
+  public static void handleBookActions() {
+
     long singularBookID = Long.parseLong(
         userInput("Book ID:", Pattern.compile("\\d{10}"), "Invalid ID."));
     System.out.println("""
@@ -99,7 +99,7 @@ public class BookController {
             "Choose a valid option."));
     if (borrowOrReturn == 3) {
       System.out.println("Exiting to previous menu.");
-      handleSingularBook();
+      BookController.handleSingularBook();
 
     } else if (borrowOrReturn == 1) {
       showBorrowBook(singularBookID);
@@ -153,7 +153,7 @@ public class BookController {
     LocalDate bookPubDate = LocalDate.parse(userInput("Date of Publication(YYYY-MM-DD):",
         Pattern.compile("\\d{4}-\\d{2}-\\d{2}"),
         "Invalid date."));
-    bookRepository.add(bookID, bookTitle, bookAuthor, bookPages, bookISBN, bookBorrowed,
+    bookRepository.add(bookID, bookTitle, bookAuthor, bookPages, bookBorrowed, bookISBN,
         bookPubDate);
   }
 
@@ -168,27 +168,6 @@ public class BookController {
     Book book = bookRepository.findID(id);
     if (book != null) {
       System.out.println(book.getTitleWithAuthor());
-    } else {
-      System.out.println("Book not in list.");
-    }
-  }
-
-  static void showBorrowBook(long id) {
-    Book book = bookRepository.findID(id);
-    if (book != null) {
-      book.borrowBook();
-      System.out.println("Book has been borrowed.");
-    } else {
-      System.out.println("Book not in list.");
-    }
-
-  }
-
-  static void showReturnBook(long id) {
-    Book book = bookRepository.findID(id);
-    if (book != null) {
-      book.returnBook();
-      System.out.println("Book has been returned.");
     } else {
       System.out.println("Book not in list.");
     }
@@ -215,6 +194,26 @@ public class BookController {
     String result = "";
     for (Book book : bookRepository.getAvailableBooks()) {
       System.out.println(result + book.getTitleWithAuthor());
+    }
+  }
+
+  public static void showBorrowBook(long id) {
+    Book book = bookRepository.findID(id);
+    if (book != null) {
+      book.borrowBook();
+      System.out.println("Book has been borrowed.");
+    } else {
+      System.out.println("Book not in list.");
+    }
+  }
+
+  public static void showReturnBook(long id) {
+    Book book = bookRepository.findID(id);
+    if (book != null) {
+      book.returnBook();
+      System.out.println("Book has been returned.");
+    } else {
+      System.out.println("Book not in list.");
     }
   }
 }
