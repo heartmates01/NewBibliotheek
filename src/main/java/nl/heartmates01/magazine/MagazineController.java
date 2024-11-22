@@ -6,7 +6,6 @@ import static nl.heartmates01.Main.userInput;
 import java.time.LocalDate;
 import java.util.regex.Pattern;
 
-
 public class MagazineController {
 
   static MagazineRepository magazineRepository = new MagazineRepository();
@@ -58,7 +57,8 @@ public class MagazineController {
               2. Remove
               3. Show
               4. Show All
-              5. Exit
+              5. Borrow or Return
+              6. Exit
           """);
 
       String userDailyChoice = userInput("Choose an option from the list:",
@@ -106,11 +106,15 @@ public class MagazineController {
         userInput("Number of Pages;", null, "Invalid number."));
     String dailyISSN = userInput("Magazine ISSN:", null, null);
     int dailyIssueNumber = Integer.parseInt(
-        userInput("Magazine Issue Number:", Pattern.compile("\\d{10}"), "Invalid issue number."));
+        userInput("Magazine Issue Number (3 Int Max.):", Pattern.compile("\\d{0,3}"),
+            "Invalid issue number."));
     LocalDate dailyPubDate = LocalDate.parse(userInput("Date of Publication(YYYY-MM-DD):",
         Pattern.compile("\\d{4}-\\d{2}-\\d{2}"),
         "Invalid date."));
+    boolean dailyBorrowed = Boolean.parseBoolean(
+        userInput("Currently being Borrowed(T/F): ", null, null));
     magazineRepository.addDailyMag(dailyID, dailyTitle, dailyPublisher, dailyCopyEditor, dailyPages,
+        dailyBorrowed,
         dailyISSN, dailyIssueNumber, dailyPubDate);
   }
 
@@ -147,8 +151,8 @@ public class MagazineController {
               1. Add
               2. Remove
               3. Show
-              4. Show All
-              5. Exit
+              5. Borrow or Return
+              6. Exit
           """);
 
       String userWeeklyChoice = userInput("Choose an option from the list:",
@@ -192,19 +196,21 @@ public class MagazineController {
         userInput("Number of Pages;", null, "Invalid number."));
     String weeklyISSN = userInput("Magazine ISSN:", null, null);
     int weeklyIssueNumber = Integer.parseInt(
-        userInput("Magazine Issue/Week Number:", Pattern.compile("\\d{10}"),
+        userInput("Magazine Issue/Week Number (3 Int Max.):", Pattern.compile("\\d{0,3}"),
             "Invalid issue/week number."));
     LocalDate weeklyPubDate = LocalDate.parse(userInput("Date of Publication(YYYY-MM-DD):",
         Pattern.compile("\\d{4}-\\d{2}-\\d{2}"),
         "Invalid date."));
+    boolean weeklyBorrowed = Boolean.parseBoolean(
+        userInput("Currently being Borrowed(T/F): ", null, null));
     magazineRepository.addWeeklyMag(weeklyID, weeklyTitle, weeklyPublisher, weeklyCopyEditor,
-        weeklyPages,
+        weeklyPages, weeklyBorrowed,
         weeklyISSN, weeklyIssueNumber, weeklyPubDate);
   }
 
   static void removeWeeklyMagazine() {
     long id = Long.parseLong(
-        userInput("Magazine ID:", Pattern.compile("\\d{10}"), "Invalid ID."));
+        userInput("Magazine ID:", Pattern.compile("\\d{2}"), "Invalid ID."));
     magazineRepository.removeWeeklyMag(id);
     System.out.println("Magazine removed from list.");
   }
@@ -235,8 +241,8 @@ public class MagazineController {
               1. Add
               2. Remove
               3. Show
-              4. Show All
-              5. Exit
+              5. Borrow or Return
+              6. Exit
           """);
 
       String userMonthlyChoice = userInput("Choose an option from the list:",
@@ -259,12 +265,14 @@ public class MagazineController {
           showAllMonthlyMagazines();
           break;
         case "5":
+
+        case "6":
           System.out.println("Exiting to previous menu.");
           return;
       }
-
     }
   }
+  
   // addMonthlyMagazine
   // removeMonthlyMagazine
   // showMonthlyMagazine
@@ -280,13 +288,15 @@ public class MagazineController {
         userInput("Number of Pages;", null, "Invalid number."));
     String monthlyISSN = userInput("Magazine ISSN:", null, null);
     int monthlyIssueNumber = Integer.parseInt(
-        userInput("Magazine Issue/Month Number:", Pattern.compile("\\d{10}"),
+        userInput("Magazine Issue/Month Number (3 Int Max.):", Pattern.compile("\\d{0,3}"),
             "Invalid issue/month number."));
     LocalDate monthlyPubDate = LocalDate.parse(userInput("Date of Publication(YYYY-MM-DD):",
         Pattern.compile("\\d{4}-\\d{2}-\\d{2}"),
         "Invalid date."));
+    boolean monthlyBorrowed = Boolean.parseBoolean(
+        userInput("Currently being Borrowed(T/F): ", null, null));
     magazineRepository.addMonthlyMag(monthlyID, monthlyTitle, monthlyPublisher, monthlyCopyEditor,
-        monthlyPages,
+        monthlyPages, monthlyBorrowed,
         monthlyISSN, monthlyIssueNumber, monthlyPubDate);
   }
 
