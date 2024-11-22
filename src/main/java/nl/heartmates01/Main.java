@@ -91,7 +91,6 @@ import java.util.regex.Pattern;
 import nl.heartmates01.book.BookController;
 import nl.heartmates01.magazine.MagazineController;
 
-
 public class Main {
 
   public static void main(String[] args) {
