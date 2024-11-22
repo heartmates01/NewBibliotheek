@@ -20,13 +20,15 @@ public class Magazine extends Item {
   private final String publisher;
   private final String copyEditor;
   private final int pages;
+  private boolean borrowed;
   private final String issn;
   private final int issueNumber;
   private final LocalDate publicationDate;
 
   protected Magazine(long id, String title, String publisher, String copyEditor, int pages,
+      boolean borrowed,
       String issn, int issueNumber, LocalDate publicationDate) {
-    super(id, title, pages, publicationDate);
+    super(id, title, pages, borrowed, publicationDate);
 
     this.id = id;
     this.title = title;
