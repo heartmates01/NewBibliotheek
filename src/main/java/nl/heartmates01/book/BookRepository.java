@@ -10,10 +10,9 @@ class BookRepository {
   // deze method maakt een nieuw Book object aan en voegt deze toe aan de books List.
   List<Book> allBooks = new ArrayList<>();
 
-  void add(long id, String title, String author, int pages, long isbn,
-      boolean borrowed,
+  void add(long id, String title, String author, int pages, boolean borrowed, long isbn,
       LocalDate publicationDate) {
-    allBooks.add(new Book(id, title, author, pages, isbn, borrowed, publicationDate));
+    allBooks.add(new Book(id, title, author, pages, borrowed, isbn, publicationDate));
   }
 
   // Deze method zoekt het boek op in de books List en verwijderd deze uit de List.
