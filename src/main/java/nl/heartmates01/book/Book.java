@@ -53,7 +53,6 @@ package nl.heartmates01.book;
 import java.time.LocalDate;
 import nl.heartmates01.library.Item;
 
-
 // overerft Item
 public class Book extends Item {
 
@@ -61,20 +60,20 @@ public class Book extends Item {
   private final String title;
   private final String author;
   private final int pages;
-  private final long isbn;
   private boolean borrowed;
+  private final long isbn;
   private final LocalDate publicationDate;
 
-  Book(long id, String title, String author, int pages, long isbn, boolean borrowed,
+  Book(long id, String title, String author, int pages, boolean borrowed, long isbn,
       LocalDate publicationDate) {
-    super(id, title, pages, publicationDate);
+    super(id, title, pages, borrowed, publicationDate);
 
     this.id = id;
     this.title = title;
     this.author = author;
     this.pages = pages;
-    this.isbn = isbn;
     this.borrowed = borrowed;
+    this.isbn = isbn;
     this.publicationDate = publicationDate;
   }
 
