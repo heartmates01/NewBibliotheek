@@ -5,12 +5,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
-class BookRepository {
+public class BookRepository {
 
   // deze method maakt een nieuw Book object aan en voegt deze toe aan de books List.
   List<Book> allBooks = new ArrayList<>();
 
-  void add(long id, String title, String author, int pages, boolean borrowed, long isbn,
+  void add(int id, String title, String author, int pages, boolean borrowed, long isbn,
       LocalDate publicationDate) {
     allBooks.add(new Book(id, title, author, pages, borrowed, isbn, publicationDate));
   }
@@ -35,7 +35,7 @@ class BookRepository {
 
   // methods zonder directe toegang tot Books
 
-  List<Book> getBooks() {
+  List<Book> getAll() {
     return allBooks;
   }
 
