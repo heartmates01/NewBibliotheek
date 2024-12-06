@@ -56,19 +56,20 @@ import nl.heartmates01.library.Item;
 // overerft Item
 public class Book extends Item {
 
-  private final long id;
-  private final String title;
-  private final String author;
-  private final int pages;
+  protected static int id;
+  private static int count;
+  private String title;
+  private String author;
+  private int pages;
   private boolean borrowed;
-  private final long isbn;
-  private final LocalDate publicationDate;
+  private long isbn;
+  private LocalDate publicationDate;
 
-  Book(long id, String title, String author, int pages, boolean borrowed, long isbn,
+  Book(int id, String title, String author, int pages, boolean borrowed, long isbn,
       LocalDate publicationDate) {
     super(id, title, pages, borrowed, publicationDate);
 
-    this.id = id;
+    this.id = ++count;
     this.title = title;
     this.author = author;
     this.pages = pages;
