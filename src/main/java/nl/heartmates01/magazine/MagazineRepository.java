@@ -7,8 +7,8 @@ import java.util.ArrayList;
 public class MagazineRepository {
 
   // dailymag
-
-  List<Magazine> allDailyMags = new ArrayList<>();
+  
+  static List<Magazine> allDailyMags = new ArrayList<>();
 
   void addDailyMag(long id, String title, String publisher, String copyEditor, int pages,
       boolean borrowed,
