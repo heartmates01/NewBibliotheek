@@ -3,87 +3,57 @@ package nl.heartmates01.magazine;
 import java.util.List;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import javax.management.ObjectInstance;
 
 public class MagazineRepository {
 
   // dailymag
-  
-  static List<Magazine> allDailyMags = new ArrayList<>();
 
-  void addDailyMag(long id, String title, String publisher, String copyEditor, int pages,
+
+  static List<Magazine> allMags = new ArrayList<>();
+
+  void addDailyMag(int id, String title, String publisher, String copyEditor, int pages,
       boolean borrowed,
       String issn, int issueNumber, LocalDate publicationDate) {
-    allDailyMags.add(
+    allMags.add(
         new DailyMag(id, title, publisher, copyEditor, pages, borrowed, issn, issueNumber,
             publicationDate));
   }
 
-  Magazine findDailyID(long id) {
-    for (Magazine magazine : allDailyMags) {
-      if (id == magazine.getID()) {
-        return magazine;
-      }
-    }
-    return null;
-  }
-
-  void removeDailyMag(long id) {
-    Magazine foundMag = findDailyID(id);
-    if (foundMag != null) {
-      allDailyMags.remove(foundMag);
-    }
-  }
-
   List<Magazine> getDailyMags() {
-    return allDailyMags;
+    return allMags.stream().filter(DailyMag.class::isInstance).toList();
   }
 
   // weeklymag
 
-  List<Magazine> allWeeklyMags = new ArrayList<>();
-
-  void addWeeklyMag(long id, String title, String publisher, String copyEditor, int pages,
+  void addWeeklyMag(int id, String title, String publisher, String copyEditor, int pages,
       boolean borrowed,
       String issn, int issueNumber, LocalDate publicationDate) {
-    allWeeklyMags.add(
+    allMags.add(
         new WeeklyMag(id, title, publisher, copyEditor, pages, borrowed, issn, issueNumber,
             publicationDate));
   }
 
-  Magazine findWeeklyID(long id) {
-    for (Magazine magazine : allWeeklyMags) {
-      if (id == magazine.getID()) {
-        return magazine;
-      }
-    }
-    return null;
-  }
-
-  void removeWeeklyMag(long id) {
-    Magazine foundMag = findWeeklyID(id);
-    if (foundMag != null) {
-      allWeeklyMags.remove(foundMag);
-    }
-  }
-
   List<Magazine> getWeeklyMags() {
-    return allWeeklyMags;
+    return allMags.stream().filter(WeeklyMag.class::isInstance).toList();
   }
 
   // monthlymag
 
-  List<Magazine> allMonthlyMags = new ArrayList<>();
-
-  void addMonthlyMag(long id, String title, String publisher, String copyEditor, int pages,
+  void addMonthlyMag(int id, String title, String publisher, String copyEditor, int pages,
       boolean borrowed,
       String issn, int issueNumber, LocalDate publicationDate) {
-    allMonthlyMags.add(
+    allMags.add(
         new MonthlyMag(id, title, publisher, copyEditor, pages, borrowed, issn, issueNumber,
             publicationDate));
   }
 
-  Magazine findMonthlyID(long id) {
-    for (Magazine magazine : allMonthlyMags) {
+  List<Magazine> getMonthlyMags() {
+    return allMags.stream().filter(MonthlyMag.class::isInstance).toList();
+  }
+
+  Magazine findID(long id) {
+    for (Magazine magazine : allMags) {
       if (id == magazine.getID()) {
         return magazine;
       }
@@ -91,14 +61,10 @@ public class MagazineRepository {
     return null;
   }
 
-  void removeMonthlyMag(long id) {
-    Magazine foundMag = findMonthlyID(id);
+  void removeMag(long id) {
+    Magazine foundMag = findID(id);
     if (foundMag != null) {
-      allMonthlyMags.remove(foundMag);
+      allMags.remove(foundMag);
     }
-  }
-
-  List<Magazine> getMonthlyMags() {
-    return allMonthlyMags;
   }
 }
