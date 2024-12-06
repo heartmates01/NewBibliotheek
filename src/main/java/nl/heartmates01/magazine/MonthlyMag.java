@@ -17,22 +17,25 @@ import java.time.LocalDate;
 
 public class MonthlyMag extends Magazine {
 
-  private final long id;
-  private final String title;
-  private final String publisher;
-  private final String copyEditor;
-  private final int pages;
+  protected static int id;
+  private static int count;
+  private String title;
+  private String publisher;
+  private String copyEditor;
+  private int pages;
   private boolean borrowed;
-  private final String issn;
-  private final int issueNumber;
-  private final LocalDate publicationDate;
+  private String issn;
+  private int issueNumber;
+  private LocalDate publicationDate;
 
-  protected MonthlyMag(long id, String title, String publisher, String copyEditor, int pages,
+  protected MonthlyMag(int id, String title, String publisher, String copyEditor,
+      int pages,
       boolean borrowed,
       String issn, int issueNumber, LocalDate publicationDate) {
-    super(id, title, publisher, copyEditor, pages, borrowed, issn, issueNumber, publicationDate);
+    super(id, title, publisher, copyEditor, pages, borrowed, issn, issueNumber,
+        publicationDate);
 
-    this.id = id;
+    this.id = ++count;
     this.title = title;
     this.publisher = publisher;
     this.copyEditor = copyEditor;
@@ -52,3 +55,4 @@ public class MonthlyMag extends Magazine {
     return "\nIssn: " + issn + "\nTitle: " + title + "\nIssue: " + issueNumber + "\nMonth: "
         + getMonthNumber() + "\nBorrowed: " + borrowed;
   }
+}
