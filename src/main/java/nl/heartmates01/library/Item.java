@@ -17,19 +17,19 @@ package nl.heartmates01.library;
 // Voor WeeklyMagazine: "Issn: {issn} - Title: {title} - Week: {weekNumber}"
 // Voor MonthlyMagazine: "Issn: {issn} - Title: {title} - Month: {monthNumber}"
 
+// 07/Polymorphism
+
 // Maak een lijst met alle boeken en tijdschriften aan de hand van de Item class.
+
 // Haal uit de lijst van boeken en tijdschriften alle items
 // die zijn uitgeleend en gebruik voor de weergave de getOverviewText() methode.
 
-// Schrijf de code die de juiste uiterleentermijn terug geeft via de Item class.
+// Schrijf de code die de juiste uitleentermijn terug geeft via de Item class.
+
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 public abstract class Item {
-
-  List<Item> allItems = new ArrayList<>();
 
   protected Item(long id, String title, int pages, boolean borrowed, LocalDate publicationDate) {
   }
