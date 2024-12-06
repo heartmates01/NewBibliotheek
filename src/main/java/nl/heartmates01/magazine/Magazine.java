@@ -15,22 +15,24 @@ import nl.heartmates01.library.Item;
 // overerft Item
 public class Magazine extends Item {
 
-  private final long id;
-  private final String title;
-  private final String publisher;
-  private final String copyEditor;
-  private final int pages;
+  private int id;
+  private static int count;
+  private String title;
+  private String publisher;
+  private String copyEditor;
+  private int pages;
   private boolean borrowed;
-  private final String issn;
-  private final int issueNumber;
-  private final LocalDate publicationDate;
+  private String issn;
+  private int issueNumber;
+  private LocalDate publicationDate;
 
-  protected Magazine(long id, String title, String publisher, String copyEditor, int pages,
+  protected Magazine(int id, String title, String publisher, String copyEditor,
+      int pages,
       boolean borrowed,
       String issn, int issueNumber, LocalDate publicationDate) {
     super(id, title, pages, borrowed, publicationDate);
 
-    this.id = id;
+    this.id = ++count;
     this.title = title;
     this.publisher = publisher;
     this.copyEditor = copyEditor;
@@ -46,5 +48,13 @@ public class Magazine extends Item {
 
   public String getOverviewText() {
     return "ISSN: " + issn + "\nTitle: " + title + "\nIssue: " + issueNumber;
+  }
+
+  void borrowMagazine() {
+    borrowed = true;
+  }
+
+  void returnMagazine() {
+    borrowed = false;
   }
 }
