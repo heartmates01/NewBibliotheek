@@ -1,13 +1,12 @@
 package nl.heartmates01.book;
 
 import static nl.heartmates01.Main.userInput;
+import static nl.heartmates01.Main.bookRepository;
 
 import java.time.LocalDate;
 import java.util.regex.Pattern;
 
 public class BookController {
-
-  static BookRepository bookRepository = new BookRepository();
 
   public static void showBookMenu() {
 
@@ -71,7 +70,7 @@ public class BookController {
 
         case "4":
           long showSingularBookID = Long.parseLong(
-              userInput("Book ID:", Pattern.compile("\\d{10}"), "Invalid ID."));
+              userInput("Book ID:", Pattern.compile("\\d"), "Invalid ID."));
           showBook(showSingularBookID);
           break;
 
@@ -85,7 +84,7 @@ public class BookController {
   public static void handleBookActions() {
 
     long singularBookID = Long.parseLong(
-        userInput("Book ID:", Pattern.compile("\\d{10}"), "Invalid ID."));
+        userInput("Book ID:", Pattern.compile("\\d"), "Invalid ID."));
     System.out.println("""
         \s
         Library Management System
@@ -141,7 +140,7 @@ public class BookController {
   }
 
   static void addBook() {
-    long bookID = Long.parseLong(userInput("Book ID:", Pattern.compile("\\d{10}"), "Invalid ID."));
+    int bookID = Book.id;
     String bookTitle = userInput("Book Title:", null, null);
     String bookAuthor = userInput("Book Author:", null, null);
     int bookPages = Integer.parseInt(
@@ -155,11 +154,12 @@ public class BookController {
         "Invalid date."));
     bookRepository.add(bookID, bookTitle, bookAuthor, bookPages, bookBorrowed, bookISBN,
         bookPubDate);
+    System.out.println("This book's assigned ID is " + bookID);
   }
 
   static void removeBook() {
     long id = Long.parseLong(
-        userInput("The ID of the book:", Pattern.compile("\\d{10}"), "Invalid ID."));
+        userInput("The ID of the book:", Pattern.compile("\\d"), "Invalid ID."));
     bookRepository.removeBook(id);
   }
 
@@ -177,7 +177,7 @@ public class BookController {
 
   static void showBooks() {
     String result = "";
-    for (Book book : bookRepository.getBooks()) {
+    for (Book book : bookRepository.getAll()) {
       System.out.println(result + book.getTitleWithAuthor());
     }
   }
@@ -201,7 +201,7 @@ public class BookController {
     Book book = bookRepository.findID(id);
     if (book != null) {
       book.borrowBook();
-      System.out.println("Book has been borrowed.");
+      System.out.println("Book has been borrowed for 14 days.");
     } else {
       System.out.println("Book not in list.");
     }
