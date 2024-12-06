@@ -89,9 +89,14 @@ package nl.heartmates01;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 import nl.heartmates01.book.BookController;
+import nl.heartmates01.book.BookRepository;
 import nl.heartmates01.magazine.MagazineController;
+import nl.heartmates01.magazine.MagazineRepository;
 
 public class Main {
+
+  public static MagazineRepository magazineRepository = new MagazineRepository();
+  public static BookRepository bookRepository = new BookRepository();
 
   public static void main(String[] args) {
 
@@ -117,6 +122,7 @@ public class Main {
           MagazineController.showMagazineMenu();
           break;
         case "3":
+          System.out.println("Exiting.");
           return;
       }
     }
