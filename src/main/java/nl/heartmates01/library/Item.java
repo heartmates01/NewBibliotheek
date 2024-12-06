@@ -26,12 +26,11 @@ package nl.heartmates01.library;
 
 // Schrijf de code die de juiste uitleentermijn terug geeft via de Item class.
 
-
 import java.time.LocalDate;
 
 public abstract class Item {
 
-  protected Item(long id, String title, int pages, boolean borrowed, LocalDate publicationDate) {
+  protected Item(int id, String title, int pages, boolean borrowed, LocalDate publicationDate) {
   }
 
   public abstract String getOverviewText();
