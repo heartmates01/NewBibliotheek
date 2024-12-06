@@ -14,7 +14,8 @@ import java.time.LocalDate;
 
 public class DailyMag extends Magazine {
 
-  private final long id;
+  protected static int id;
+  private static int count;
   private final String title;
   private final String publisher;
   private final String copyEditor;
@@ -24,12 +25,14 @@ public class DailyMag extends Magazine {
   private final int issueNumber;
   private final LocalDate publicationDate;
 
-  protected DailyMag(long id, String title, String publisher, String copyEditor, int pages,
+  protected DailyMag(int id, String title, String publisher, String copyEditor,
+      int pages,
       boolean borrowed,
       String issn, int issueNumber, LocalDate publicationDate) {
-    super(id, title, publisher, copyEditor, pages, borrowed, issn, issueNumber, publicationDate);
+    super(id, title, publisher, copyEditor, pages, borrowed, issn, issueNumber,
+        publicationDate);
 
-    this.id = id;
+    this.id = ++count;
     this.title = title;
     this.publisher = publisher;
     this.copyEditor = copyEditor;
