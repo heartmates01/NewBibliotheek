@@ -8,15 +8,16 @@ import java.util.function.Predicate;
 public class BookRepository {
 
   // deze method maakt een nieuw Book object aan en voegt deze toe aan de books List.
-  List<Book> allBooks = new ArrayList<>();
+  public static List<Book> allBooks = new ArrayList<>();
 
-  void add(int id, String title, String author, int pages, boolean borrowed, long isbn,
+  void add(int id, String title, String author, int pages, boolean borrowed, int borrowTime,
+      long isbn,
       LocalDate publicationDate) {
-    allBooks.add(new Book(id, title, author, pages, borrowed, isbn, publicationDate));
+    allBooks.add(new Book(id, title, author, pages, borrowed, isbn, borrowTime, publicationDate));
   }
 
   // Deze method zoekt het boek op in de books List en verwijderd deze uit de List.
-  void removeBook(long id) {
+  void removeBook(int id) {
     Book foundBook = findID(id);
     if (foundBook != null) {
       allBooks.remove(foundBook);
@@ -24,7 +25,7 @@ public class BookRepository {
   }
 
   // zoekt id van book
-  Book findID(long id) {
+  public Book findID(int id) {
     for (Book book : allBooks) {
       if (id == book.getId()) {
         return book;
