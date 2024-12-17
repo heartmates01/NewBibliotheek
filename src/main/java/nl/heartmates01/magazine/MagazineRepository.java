@@ -3,20 +3,20 @@ package nl.heartmates01.magazine;
 import java.util.List;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import javax.management.ObjectInstance;
+import java.util.function.Predicate;
 
 public class MagazineRepository {
 
   // dailymag
 
-
-  static List<Magazine> allMags = new ArrayList<>();
+  public static List<Magazine> allMags = new ArrayList<>();
 
   void addDailyMag(int id, String title, String publisher, String copyEditor, int pages,
-      boolean borrowed,
+      boolean borrowed, int borrowTime,
       String issn, int issueNumber, LocalDate publicationDate) {
     allMags.add(
-        new DailyMag(id, title, publisher, copyEditor, pages, borrowed, issn, issueNumber,
+        new DailyMag(id, title, publisher, copyEditor, pages, borrowed, borrowTime, issn,
+            issueNumber,
             publicationDate));
   }
 
@@ -27,10 +27,11 @@ public class MagazineRepository {
   // weeklymag
 
   void addWeeklyMag(int id, String title, String publisher, String copyEditor, int pages,
-      boolean borrowed,
+      boolean borrowed, int borrowTime,
       String issn, int issueNumber, LocalDate publicationDate) {
     allMags.add(
-        new WeeklyMag(id, title, publisher, copyEditor, pages, borrowed, issn, issueNumber,
+        new WeeklyMag(id, title, publisher, copyEditor, pages, borrowed, borrowTime, issn,
+            issueNumber,
             publicationDate));
   }
 
@@ -41,10 +42,11 @@ public class MagazineRepository {
   // monthlymag
 
   void addMonthlyMag(int id, String title, String publisher, String copyEditor, int pages,
-      boolean borrowed,
+      boolean borrowed, int borrowTime,
       String issn, int issueNumber, LocalDate publicationDate) {
     allMags.add(
-        new MonthlyMag(id, title, publisher, copyEditor, pages, borrowed, issn, issueNumber,
+        new MonthlyMag(id, title, publisher, copyEditor, pages, borrowed, borrowTime, issn,
+            issueNumber,
             publicationDate));
   }
 
@@ -52,7 +54,7 @@ public class MagazineRepository {
     return allMags.stream().filter(MonthlyMag.class::isInstance).toList();
   }
 
-  Magazine findID(long id) {
+  public Magazine findID(int id) {
     for (Magazine magazine : allMags) {
       if (id == magazine.getID()) {
         return magazine;
@@ -61,10 +63,22 @@ public class MagazineRepository {
     return null;
   }
 
-  void removeMag(long id) {
+  void removeMag(int id) {
     Magazine foundMag = findID(id);
     if (foundMag != null) {
       allMags.remove(foundMag);
     }
+  }
+
+  List<Magazine> getAll() {
+    return allMags;
+  }
+
+  List<Magazine> getBorrowedMags() {
+    return allMags.stream().filter(Magazine::hasBeenBorrowed).toList();
+  }
+
+  List<Magazine> getAvailableMags() {
+    return allMags.stream().filter(Predicate.not(Magazine::hasBeenBorrowed)).toList();
   }
 }
