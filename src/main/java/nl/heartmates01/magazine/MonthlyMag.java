@@ -24,23 +24,25 @@ public class MonthlyMag extends Magazine {
   private String copyEditor;
   private int pages;
   private boolean borrowed;
+  protected static int borrowTime;
   private String issn;
   private int issueNumber;
   private LocalDate publicationDate;
 
   protected MonthlyMag(int id, String title, String publisher, String copyEditor,
       int pages,
-      boolean borrowed,
+      boolean borrowed, int borrowTime,
       String issn, int issueNumber, LocalDate publicationDate) {
-    super(id, title, publisher, copyEditor, pages, borrowed, issn, issueNumber,
+    super(id, title, publisher, copyEditor, pages, borrowed, borrowTime, issn, issueNumber,
         publicationDate);
 
-    this.id = ++count;
+    MonthlyMag.id = ++count;
     this.title = title;
     this.publisher = publisher;
     this.copyEditor = copyEditor;
     this.pages = pages;
     this.borrowed = borrowed;
+    MonthlyMag.borrowTime = 0;
     this.issn = issn;
     this.issueNumber = issueNumber;
     this.publicationDate = publicationDate;
@@ -54,5 +56,17 @@ public class MonthlyMag extends Magazine {
   public String getOverviewText() {
     return "\nIssn: " + issn + "\nTitle: " + title + "\nIssue: " + issueNumber + "\nMonth: "
         + getMonthNumber() + "\nBorrowed: " + borrowed;
+  }
+
+  public void borrow() {
+    borrowed = true;
+    borrowTime = 7;
+    System.out.println("Magazine has been borrowed for 7 days.");
+  }
+
+  public void returnn() {
+    borrowed = false;
+    borrowTime = 0;
+    System.out.println("Magazine has been returned.");
   }
 }
