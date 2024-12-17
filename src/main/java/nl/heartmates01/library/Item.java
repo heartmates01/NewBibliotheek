@@ -27,11 +27,25 @@ package nl.heartmates01.library;
 // Schrijf de code die de juiste uitleentermijn terug geeft via de Item class.
 
 import java.time.LocalDate;
+import java.util.List;
+
+import java.util.stream.Stream;
+
+import static nl.heartmates01.book.BookRepository.allBooks;
+import static nl.heartmates01.magazine.MagazineRepository.allMags;
 
 public abstract class Item {
 
-  protected Item(int id, String title, int pages, boolean borrowed, LocalDate publicationDate) {
+  List<Item> allItems = Stream.concat(allBooks.stream(), allMags.stream()).toList();
+
+  protected Item(int id, String title, int pages, boolean borrowed, int borrowTime,
+      LocalDate publicationDate) {
   }
 
   public abstract String getOverviewText();
+
+  protected abstract void borrow();
+
+  protected abstract void returnn();
+
 }
