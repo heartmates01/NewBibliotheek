@@ -22,15 +22,16 @@ public class Magazine extends Item {
   private String copyEditor;
   private int pages;
   private boolean borrowed;
+  protected static int borrowTime;
   private String issn;
   private int issueNumber;
   private LocalDate publicationDate;
 
   protected Magazine(int id, String title, String publisher, String copyEditor,
       int pages,
-      boolean borrowed,
+      boolean borrowed, int borrowTime,
       String issn, int issueNumber, LocalDate publicationDate) {
-    super(id, title, pages, borrowed, publicationDate);
+    super(id, title, pages, borrowed, borrowTime, publicationDate);
 
     this.id = ++count;
     this.title = title;
@@ -42,19 +43,27 @@ public class Magazine extends Item {
     this.publicationDate = publicationDate;
   }
 
-  long getID() {
+  int getID() {
     return id;
   }
 
   public String getOverviewText() {
-    return "ISSN: " + issn + "\nTitle: " + title + "\nIssue: " + issueNumber;
+    return "\nISSN: " + issn + "\nTitle: " + title + "\nIssue: " + issueNumber;
   }
 
-  void borrowMagazine() {
+  public void borrow() {
     borrowed = true;
+    borrowTime = 2;
+    System.out.println("Magazine has been borrowed.");
   }
 
-  void returnMagazine() {
+  public void returnn() {
     borrowed = false;
+    borrowTime = 0;
+    System.out.println("Magazine has been returned.");
+  }
+
+  public boolean hasBeenBorrowed() {
+    return borrowed;
   }
 }
