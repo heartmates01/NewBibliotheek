@@ -5,6 +5,7 @@ import static nl.heartmates01.Main.magazineRepository;
 
 import java.time.LocalDate;
 import java.util.regex.Pattern;
+import nl.heartmates01.library.BorrowService;
 
 public class MagazineController {
 
@@ -18,11 +19,12 @@ public class MagazineController {
            1. Manage Daily Magazines
            2. Manage Weekly Magazines
            3. Manage Monthly Magazines
-           4. Exit to main menu
+           4. Manage All Magazines
+           5. Exit to main menu
           """);
 
       String userMagChoice = userInput("Choose an option from the list:",
-          Pattern.compile("[0-4]"),
+          Pattern.compile("[0-5]"),
           "Choose a valid option");
 
       switch (userMagChoice) {
@@ -39,6 +41,9 @@ public class MagazineController {
           break;
 
         case "4":
+          handleAllMags();
+
+        case "5":
           System.out.println("Exiting to main menu.");
           return;
       }
@@ -56,14 +61,14 @@ public class MagazineController {
               3. Show
               4. Show All
               5. Borrow or Return
-              6. Exit
+              5. Exit
           """);
 
-      String userDailyChoice = userInput("Choose an option from the list:",
-          Pattern.compile("[0-5]"),
+      String userChoice = userInput("Choose an option from the list:",
+          Pattern.compile("[0-6]"),
           "Choose a valid option");
 
-      switch (userDailyChoice) {
+      switch (userChoice) {
         case "1":
           addDailyMagazine();
           break;
@@ -73,7 +78,7 @@ public class MagazineController {
           break;
 
         case "3":
-          long showID = Long.parseLong(
+          int showID = Integer.parseInt(
               userInput("Magazine ID:", Pattern.compile("\\d"), "Invalid ID."));
           showMagazine(showID);
           break;
@@ -83,7 +88,10 @@ public class MagazineController {
           break;
 
         case "5":
-          borrowOrReturn();
+          int id = Integer.parseInt(
+              userInput("Magazine ID:", Pattern.compile("\\d"), "Invalid ID."));
+          DailyMag magazine = (DailyMag) magazineRepository.findID(id);
+          borrowOrReturn(magazine);
           break;
 
         case "6":
@@ -102,15 +110,16 @@ public class MagazineController {
               1. Add
               2. Remove
               3. Show
+              4. Show All
               5. Borrow or Return
               6. Exit
           """);
 
-      String userWeeklyChoice = userInput("Choose an option from the list:",
+      String userChoice = userInput("Choose an option from the list:",
           Pattern.compile("[0-5]"),
           "Choose a valid option");
 
-      switch (userWeeklyChoice) {
+      switch (userChoice) {
         case "1":
           addWeeklyMagazine();
           break;
@@ -120,7 +129,7 @@ public class MagazineController {
           break;
 
         case "3":
-          long showID = Long.parseLong(
+          int showID = Integer.parseInt(
               userInput("Magazine ID:", Pattern.compile("\\d"), "Invalid ID."));
           showMagazine(showID);
           break;
@@ -130,7 +139,10 @@ public class MagazineController {
           break;
 
         case "5":
-          borrowOrReturn();
+          int id = Integer.parseInt(
+              userInput("Magazine ID: ", Pattern.compile("\\d"), "Invalid ID."));
+          WeeklyMag magazine = (WeeklyMag) magazineRepository.findID(id);
+          borrowOrReturn(magazine);
           break;
 
         case "6":
@@ -139,7 +151,6 @@ public class MagazineController {
       }
     }
   }
-
 
   static void handleMonthlyMags() {
     while (true) {
@@ -150,15 +161,16 @@ public class MagazineController {
               1. Add
               2. Remove
               3. Show
+              4. Show All
               5. Borrow or Return
               6. Exit
           """);
 
-      String userMonthlyChoice = userInput("Choose an option from the list:",
+      String userChoice = userInput("Choose an option from the list:",
           Pattern.compile("[0-5]"),
           "Choose a valid option");
 
-      switch (userMonthlyChoice) {
+      switch (userChoice) {
         case "1":
           addMonthlyMagazine();
           break;
@@ -168,7 +180,7 @@ public class MagazineController {
           break;
 
         case "3":
-          long showID = Long.parseLong(
+          int showID = Integer.parseInt(
               userInput("Magazine ID:", Pattern.compile("\\d"), "Invalid ID."));
           showMagazine(showID);
           break;
@@ -178,11 +190,47 @@ public class MagazineController {
           break;
 
         case "5":
-          borrowOrReturn();
+          int id = Integer.parseInt(
+              userInput("Magazine ID:", Pattern.compile("\\d"), "Invalid ID."));
+          MonthlyMag magazine = (MonthlyMag) magazineRepository.findID(id);
+          borrowOrReturn(magazine);
           break;
 
         case "6":
           System.out.println("Exiting to previous menu.");
+          return;
+      }
+    }
+  }
+
+  static void handleAllMags() {
+    while (true) {
+      System.out.println("""
+              \s
+              Library Management System
+              \s
+              1. Show All
+              2. Show All Borrowed
+              3. Show All Available
+              4. Exit
+          """);
+
+      String userChoice = userInput("Choose an option from the list:",
+          Pattern.compile("[0-4]"),
+          "Choose a valid option");
+
+      switch (userChoice) {
+        case "1":
+          showMags();
+          break;
+        case "2":
+          showBorrowedMags();
+          break;
+        case "3":
+          showAvailableMags();
+          break;
+        case "4":
+          System.out.println("Exiting.");
           return;
       }
     }
@@ -204,10 +252,10 @@ public class MagazineController {
         "Invalid date."));
     boolean dailyBorrowed = Boolean.parseBoolean(
         userInput("Currently being Borrowed(T/F): ", null, null));
+    int dailyBorrowTime = MonthlyMag.borrowTime;
     magazineRepository.addDailyMag(dailyID, dailyTitle, dailyPublisher, dailyCopyEditor, dailyPages,
-        dailyBorrowed,
+        dailyBorrowed, dailyBorrowTime,
         dailyISSN, dailyIssueNumber, dailyPubDate);
-    System.out.println("This magazine's assigned ID is " + dailyID);
   }
 
   static void addWeeklyMagazine() {
@@ -226,10 +274,10 @@ public class MagazineController {
         "Invalid date."));
     boolean weeklyBorrowed = Boolean.parseBoolean(
         userInput("Currently being Borrowed(T/F): ", null, null));
+    int weeklyBorrowTime = WeeklyMag.borrowTime;
     magazineRepository.addWeeklyMag(weeklyID, weeklyTitle, weeklyPublisher, weeklyCopyEditor,
-        weeklyPages, weeklyBorrowed,
+        weeklyPages, weeklyBorrowed, weeklyBorrowTime,
         weeklyISSN, weeklyIssueNumber, weeklyPubDate);
-    System.out.println("This magazine's assigned ID is " + weeklyID);
   }
 
   static void addMonthlyMagazine() {
@@ -248,10 +296,10 @@ public class MagazineController {
         "Invalid date."));
     boolean monthlyBorrowed = Boolean.parseBoolean(
         userInput("Currently being Borrowed(T/F): ", null, null));
+    int monthlyTime = MonthlyMag.borrowTime;
     magazineRepository.addMonthlyMag(monthlyID, monthlyTitle, monthlyPublisher, monthlyCopyEditor,
-        monthlyPages, monthlyBorrowed,
+        monthlyPages, monthlyBorrowed, monthlyTime,
         monthlyISSN, monthlyIssueNumber, monthlyPubDate);
-    System.out.println("This magazine's assigned ID is " + monthlyID);
   }
 
   static void showAllDailyMagazines() {
@@ -278,14 +326,38 @@ public class MagazineController {
     System.out.println(result);
   }
 
+  static void borrowOrReturn(Magazine magazine) {
+    System.out.println("""
+        \s
+        Library Management System
+        \s
+        1. Borrow
+        2. Return
+        3. Exit to magazine menu""");
+
+    int borrowOrReturn = Integer.parseInt(
+        userInput("Choose an option from the list.", Pattern.compile("[0-3]"),
+            "Choose a valid option."));
+    if (borrowOrReturn == 3) {
+      System.out.println("Exiting to magazine menu.");
+      showMagazineMenu();
+
+    } else if (borrowOrReturn == 1) {
+      BorrowService.borrowItem(magazine);
+
+    } else if (borrowOrReturn == 2) {
+      BorrowService.returnItem(magazine);
+    }
+  }
+
   static void removeMagazine() {
-    long id = Long.parseLong(
+    int id = Integer.parseInt(
         userInput("Magazine ID:", Pattern.compile("\\d"), "Invalid ID."));
     magazineRepository.removeMag(id);
     System.out.println("Magazine removed from list.");
   }
 
-  static void showMagazine(long id) {
+  static void showMagazine(int id) {
     Magazine magazine = magazineRepository.findID(id);
     if (magazine != null) {
       System.out.println(magazine.getOverviewText());
@@ -294,49 +366,24 @@ public class MagazineController {
     }
   }
 
-  static void borrowOrReturn() {
-    long id = Long.parseLong(
-        userInput("Magazine ID:", Pattern.compile("\\d"), "Invalid ID."));
-    System.out.println("""
-        \s
-        Library Management System
-        \s
-        1. Borrow
-        2. Return
-        3. Exit to previous menu""");
-
-    int borrowOrReturn = Integer.parseInt(
-        userInput("Choose an option from the list.", Pattern.compile("[0-3]"),
-            "Choose a valid option."));
-    if (borrowOrReturn == 3) {
-      System.out.println("Exiting to previous menu.");
-      handleDailyMags();
-
-    } else if (borrowOrReturn == 1) {
-      borrowMag(id);
-
-    } else if (borrowOrReturn == 2) {
-      returnMag(id);
+  static void showMags() {
+    String result = "";
+    for (Magazine magazine : magazineRepository.getAll()) {
+      System.out.println(result + magazine.getOverviewText());
     }
   }
 
-  static void borrowMag(long id) {
-    Magazine magazine = magazineRepository.findID(id);
-    if (magazine != null) {
-      magazine.borrowMagazine();
-      System.out.println("Magazine has been borrowed for 2 days.");
-    } else {
-      System.out.println("Magazine not in list.");
+  static void showBorrowedMags() {
+    String result = "";
+    for (Magazine magazine : magazineRepository.getBorrowedMags()) {
+      System.out.println(result + magazine.getOverviewText());
     }
   }
 
-  static void returnMag(long id) {
-    Magazine magazine = magazineRepository.findID(id);
-    if (magazine != null) {
-      magazine.returnMagazine();
-      System.out.println("Magazine has been returned.");
-    } else {
-      System.out.println("Magazine not in list.");
+  static void showAvailableMags() {
+    String result = "";
+    for (Magazine magazine : magazineRepository.getAvailableMags()) {
+      System.out.println(result + magazine.getOverviewText());
     }
   }
 }
