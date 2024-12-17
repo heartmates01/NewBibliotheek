@@ -5,6 +5,7 @@ import static nl.heartmates01.Main.bookRepository;
 
 import java.time.LocalDate;
 import java.util.regex.Pattern;
+import nl.heartmates01.library.BorrowService;
 
 public class BookController {
 
@@ -32,7 +33,7 @@ public class BookController {
         case "2":
           handleMultipleBooks();
           break;
-        //etc
+
         case "3":
           System.out.println("Exiting to main menu.");
           return;
@@ -65,46 +66,22 @@ public class BookController {
           break;
 
         case "3":
-          handleBookActions();
+          int ID = Integer.parseInt(
+              userInput("Magazine ID:", Pattern.compile("\\d"), "Invalid ID."));
+          Book book = bookRepository.findID(ID);
+          borrowOrReturn(book);
           break;
 
         case "4":
-          long showSingularBookID = Long.parseLong(
+          int id = Integer.parseInt(
               userInput("Book ID:", Pattern.compile("\\d"), "Invalid ID."));
-          showBook(showSingularBookID);
+          showBook(id);
           break;
 
         case "5":
           System.out.println("Exiting to previous menu.");
           return;
       }
-    }
-  }
-
-  public static void handleBookActions() {
-
-    long singularBookID = Long.parseLong(
-        userInput("Book ID:", Pattern.compile("\\d"), "Invalid ID."));
-    System.out.println("""
-        \s
-        Library Management System
-        \s
-        1. Borrow
-        2. Return
-        3. Exit to previous menu""");
-
-    int borrowOrReturn = Integer.parseInt(
-        userInput("Choose an option from the list.", Pattern.compile("[0-3]"),
-            "Choose a valid option."));
-    if (borrowOrReturn == 3) {
-      System.out.println("Exiting to previous menu.");
-      BookController.handleSingularBook();
-
-    } else if (borrowOrReturn == 1) {
-      showBorrowBook(singularBookID);
-
-    } else if (borrowOrReturn == 2) {
-      showReturnBook(singularBookID);
     }
   }
 
@@ -152,19 +129,44 @@ public class BookController {
     LocalDate bookPubDate = LocalDate.parse(userInput("Date of Publication(YYYY-MM-DD):",
         Pattern.compile("\\d{4}-\\d{2}-\\d{2}"),
         "Invalid date."));
-    bookRepository.add(bookID, bookTitle, bookAuthor, bookPages, bookBorrowed, bookISBN,
+    int bookBorrowTime = Book.borrowTime;
+    bookRepository.add(bookID, bookTitle, bookAuthor, bookPages, bookBorrowed, bookBorrowTime,
+        bookISBN,
         bookPubDate);
     System.out.println("This book's assigned ID is " + bookID);
   }
 
   static void removeBook() {
-    long id = Long.parseLong(
+    int id = Integer.parseInt(
         userInput("The ID of the book:", Pattern.compile("\\d"), "Invalid ID."));
     bookRepository.removeBook(id);
   }
 
+  static void borrowOrReturn(Book book) {
+    System.out.println("""
+        \s
+        Library Management System
+        \s
+        1. Borrow
+        2. Return
+        3. Exit to previous menu""");
 
-  static void showBook(long id) {
+    int borrowOrReturn = Integer.parseInt(
+        userInput("Choose an option from the list.", Pattern.compile("[0-3]"),
+            "Choose a valid option."));
+    if (borrowOrReturn == 3) {
+      System.out.println("Exiting to menu.");
+      return;
+
+    } else if (borrowOrReturn == 1) {
+      BorrowService.borrowItem(book);
+
+    } else if (borrowOrReturn == 2) {
+      BorrowService.returnItem(book);
+    }
+  }
+
+  static void showBook(int id) {
     Book book = bookRepository.findID(id);
     if (book != null) {
       System.out.println(book.getTitleWithAuthor());
@@ -182,7 +184,6 @@ public class BookController {
     }
   }
 
-
   static void showBorrowedBooks() {
     String result = "";
     for (Book book : bookRepository.getBorrowedBooks()) {
@@ -194,26 +195,6 @@ public class BookController {
     String result = "";
     for (Book book : bookRepository.getAvailableBooks()) {
       System.out.println(result + book.getTitleWithAuthor());
-    }
-  }
-
-  public static void showBorrowBook(long id) {
-    Book book = bookRepository.findID(id);
-    if (book != null) {
-      book.borrowBook();
-      System.out.println("Book has been borrowed for 14 days.");
-    } else {
-      System.out.println("Book not in list.");
-    }
-  }
-
-  public static void showReturnBook(long id) {
-    Book book = bookRepository.findID(id);
-    if (book != null) {
-      book.returnBook();
-      System.out.println("Book has been returned.");
-    } else {
-      System.out.println("Book not in list.");
     }
   }
 }
