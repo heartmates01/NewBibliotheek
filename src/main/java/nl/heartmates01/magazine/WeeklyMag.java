@@ -25,23 +25,25 @@ public class WeeklyMag extends Magazine {
   private String copyEditor;
   private int pages;
   private boolean borrowed;
+  protected static int borrowTime;
   private String issn;
   private int issueNumber;
   private LocalDate publicationDate;
 
   protected WeeklyMag(int id, String title, String publisher, String copyEditor,
       int pages,
-      boolean borrowed,
+      boolean borrowed, int borrowTime,
       String issn, int issueNumber, LocalDate publicationDate) {
-    super(id, title, publisher, copyEditor, pages, borrowed, issn, issueNumber,
+    super(id, title, publisher, copyEditor, pages, borrowed, borrowTime, issn, issueNumber,
         publicationDate);
 
-    this.id = ++count;
+    WeeklyMag.id = ++count;
     this.title = title;
     this.publisher = publisher;
     this.copyEditor = copyEditor;
     this.pages = pages;
     this.borrowed = borrowed;
+    WeeklyMag.borrowTime = 0;
     this.issn = issn;
     this.issueNumber = issueNumber;
     this.publicationDate = publicationDate;
@@ -56,5 +58,17 @@ public class WeeklyMag extends Magazine {
   public String getOverviewText() {
     return "\nIssn: " + issn + "\nTitle: " + title + "\nWeek: " + getWeekNumber() + "\nBorrowed: "
         + borrowed;
+  }
+
+  public void borrow() {
+    borrowed = true;
+    borrowTime = 5;
+    System.out.println("Magazine has been borrowed for 5 days.");
+  }
+
+  public void returnn() {
+    borrowed = false;
+    borrowTime = 0;
+    System.out.println("Magazine has been returned.");
   }
 }
