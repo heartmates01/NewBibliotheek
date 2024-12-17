@@ -63,18 +63,20 @@ public class Book extends Item {
   private int pages;
   private boolean borrowed;
   private long isbn;
+  protected static int borrowTime;
   private LocalDate publicationDate;
 
-  Book(int id, String title, String author, int pages, boolean borrowed, long isbn,
+  Book(int id, String title, String author, int pages, boolean borrowed, long isbn, int borrowTime,
       LocalDate publicationDate) {
-    super(id, title, pages, borrowed, publicationDate);
+    super(id, title, pages, borrowed, borrowTime, publicationDate);
 
-    this.id = ++count;
+    Book.id = ++count;
     this.title = title;
     this.author = author;
     this.pages = pages;
     this.borrowed = borrowed;
     this.isbn = isbn;
+    Book.borrowTime = 0;
     this.publicationDate = publicationDate;
   }
 
@@ -105,15 +107,15 @@ public class Book extends Item {
         + "\n" + "Publication date = " + publicationDate;
   }
 
-  // void borrowBook()
-// Deze method zet de borrowed waarde op true.
-  void borrowBook() {
+  public void borrow() {
     borrowed = true;
+    borrowTime = 14;
+    System.out.println("Book has been borrowed.");
   }
 
-  // void returnBook()
-// Deze method zet de borrowed waarde op false.
-  void returnBook() {
+  public void returnn() {
     borrowed = false;
+    borrowTime = 0;
+    System.out.println("Book has been returned.");
   }
 }
