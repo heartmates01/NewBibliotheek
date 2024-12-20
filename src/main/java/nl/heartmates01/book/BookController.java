@@ -67,9 +67,9 @@ public class BookController {
 
         case "3":
           int ID = Integer.parseInt(
-              userInput("Magazine ID:", Pattern.compile("\\d"), "Invalid ID."));
+              userInput("Book ID:", Pattern.compile("\\d"), "Invalid ID."));
           Book book = bookRepository.findID(ID);
-          borrowOrReturn(book);
+          BorrowService.borrowOrReturn(book);
           break;
 
         case "4":
@@ -123,9 +123,10 @@ public class BookController {
     int bookPages = Integer.parseInt(
         userInput("Number of Pages;", null, "Invalid number."));
     long bookISBN = Long.parseLong(
-        userInput("Book ISBN:", Pattern.compile("\\d{13}"), "Invalid ISBN."));
+        userInput("Book ISBN (13 CHR.):", Pattern.compile("\\d{13}"), "Invalid ISBN."));
     boolean bookBorrowed = Boolean.parseBoolean(
-        userInput("Currently being borrowed (Y/N):", null, null));
+        userInput("Currently being borrowed (T/F):", Pattern.compile("true|True|false|False"),
+            "Invalid answer."));
     LocalDate bookPubDate = LocalDate.parse(userInput("Date of Publication(YYYY-MM-DD):",
         Pattern.compile("\\d{4}-\\d{2}-\\d{2}"),
         "Invalid date."));
@@ -133,37 +134,13 @@ public class BookController {
     bookRepository.add(bookID, bookTitle, bookAuthor, bookPages, bookBorrowed, bookBorrowTime,
         bookISBN,
         bookPubDate);
-    System.out.println("This book's assigned ID is " + bookID);
+    System.out.println("This book's assigned ID is " + bookID + 1);
   }
 
   static void removeBook() {
     int id = Integer.parseInt(
         userInput("The ID of the book:", Pattern.compile("\\d"), "Invalid ID."));
     bookRepository.removeBook(id);
-  }
-
-  static void borrowOrReturn(Book book) {
-    System.out.println("""
-        \s
-        Library Management System
-        \s
-        1. Borrow
-        2. Return
-        3. Exit to previous menu""");
-
-    int borrowOrReturn = Integer.parseInt(
-        userInput("Choose an option from the list.", Pattern.compile("[0-3]"),
-            "Choose a valid option."));
-    if (borrowOrReturn == 3) {
-      System.out.println("Exiting to menu.");
-      return;
-
-    } else if (borrowOrReturn == 1) {
-      BorrowService.borrowItem(book);
-
-    } else if (borrowOrReturn == 2) {
-      BorrowService.returnItem(book);
-    }
   }
 
   static void showBook(int id) {
@@ -174,8 +151,6 @@ public class BookController {
       System.out.println("Book not in list.");
     }
   }
-
-  // methods zonder directe toegang tot Books
 
   static void showBooks() {
     String result = "";
