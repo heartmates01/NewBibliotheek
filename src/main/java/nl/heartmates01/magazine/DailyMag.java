@@ -12,7 +12,7 @@ package nl.heartmates01.magazine;
 
 import java.time.LocalDate;
 
-public class DailyMag extends Magazine {
+class DailyMag extends Magazine {
 
   protected static int id;
   private static int count;
