@@ -136,7 +136,9 @@ public class Main {
     if (pattern != null) {
       while (!scanner.hasNext(pattern)) {
         System.out.println(errorMessage);
-        scanner.next();
+       // scanner.next();
+        // scanner.next probably wrong and the reason for that exception error jsyk
+        
       }
     }
     return scanner.nextLine();
