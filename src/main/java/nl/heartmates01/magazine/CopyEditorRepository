@@ -1,0 +1,113 @@
+package nl.heartmates01.magazine;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import nl.heartmates01.main.JdbcSingleton;
+
+public class CopyEditorRepository {
+
+  private final JdbcSingleton jdbcSingleton = JdbcSingleton.getInstance();
+
+  public List<CopyEditor> add(CopyEditor... copyEditors) {
+    if (copyEditors.length == 0) {
+      return new ArrayList<>();
+    }
+
+    StringBuilder multipleInserts = new StringBuilder();
+    List<Object> parameters = new ArrayList<>();
+    String insertQueryString = "INSERT INTO copyEditors (copyId, name, dateOfBirth) VALUES (?, ?, ?)";
+
+    int copyIndex = 0;
+    for (CopyEditor copyEditor : copyEditors) {
+      if (copyEditors.length > 1 && copyIndex == 0) {
+        multipleInserts.append(",");
+      }
+
+      multipleInserts.append(insertQueryString);
+      parameters.addAll(List.of(
+          copyEditor.getId(),
+          copyEditor.getName(),
+          copyEditor.getDateOfBirth()
+      ));
+      copyIndex++;
+
+      List<Integer> ids;
+      try {
+        ids = jdbcSingleton.insertQuery(multipleInserts.toString(),
+            parameters.toArray());
+        for (int i = 1; i <= ids.size(); i++) {
+          copyEditor.setCopyId(ids.get(i));
+        }
+      } catch (SQLException e) {
+        //
+      }
+    }
+    return List.of(copyEditors);
+  }
+
+  public int delete(int id) {
+    int result = id;
+    try {
+      result = jdbcSingleton.deleteQuery("DELETE FROM copyEditors WHERE copyId = ?", id);
+    } catch (SQLException e) {
+      //
+    }
+    return result;
+  }
+
+  public Optional<CopyEditor> get(int id) {
+    Optional<ResultSet> result = Optional.empty();
+    try {
+      result = jdbcSingleton.selectQuery("SELECT * FROM copyEditors WHERE copyId = ?", id);
+    } catch (SQLException e) {
+      //
+    }
+    if (result.isEmpty()) {
+      return Optional.empty();
+    }
+
+    ResultSet resultSet = result.get();
+    try {
+      resultSet.next();
+      return Optional.of(new CopyEditor(
+          resultSet.getInt("copyId"),
+          resultSet.getString("name"),
+          resultSet.getDate("dateOfBirth").toLocalDate()
+      ));
+
+    } catch (SQLException e) {
+      //
+    }
+    return Optional.empty();
+  }
+
+  public List<CopyEditor> getAll() {
+    Optional<ResultSet> results = Optional.empty();
+    try {
+      results = jdbcSingleton.selectQuery("SELECT * FROM copyEditors");
+    } catch (SQLException e) {
+      //
+    }
+    if (results.isEmpty()) {
+      return new ArrayList<>();
+    }
+
+    ResultSet resultSet = results.get();
+    List<CopyEditor> copyEditors = new ArrayList<>();
+    try {
+      while (resultSet.next()) {
+        copyEditors.add(new CopyEditor(
+            resultSet.getInt("copyId"),
+            resultSet.getString("name"),
+            resultSet.getDate("dateOfBirth").toLocalDate()
+        ));
+      }
+    } catch (SQLException e) {
+      //
+    }
+    return copyEditors;
+  }
+}
