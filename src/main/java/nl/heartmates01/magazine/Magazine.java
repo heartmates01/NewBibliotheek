@@ -1,69 +1,113 @@
 package nl.heartmates01.magazine;
 
-//- id (long)
-//- title (String)
-//- publisher (String)
-//- copyEditor (String)
-//- pages (int)
-//- issn (String)
-//- issueNumber (int)
-//- publicationDate (LocalDate)
-
 import java.time.LocalDate;
 import nl.heartmates01.library.Item;
 
 // overerft Item
 public class Magazine extends Item {
 
-  private int id;
-  private static int count;
-  private String title;
-  private String publisher;
-  private String copyEditor;
-  private int pages;
-  private boolean borrowed;
-  protected static int borrowTime;
-  private String issn;
-  private int issueNumber;
-  private LocalDate publicationDate;
+  protected int id;
+  private final String title;
+  private final String type;
+  private final Publisher publisher;
+  private final CopyEditor copyEditor;
+  protected int pages;
+  private final boolean borrowed;
+  private final int issueNumber;
+  private final LocalDate publicationDate;
+  private final int issn;
 
-  protected Magazine(int id, String title, String publisher, String copyEditor,
+  Magazine(int id, String title, String type, Publisher publisher, CopyEditor copyEditor,
       int pages,
-      boolean borrowed, int borrowTime,
-      String issn, int issueNumber, LocalDate publicationDate) {
-    super(id, title, pages, borrowed, borrowTime, publicationDate);
+      boolean borrowed, int issueNumber, LocalDate publicationDate, int issn) {
+    super(title, pages, borrowed, publicationDate);
 
-    this.id = ++count;
+    this.id = id;
     this.title = title;
+    this.type = type;
     this.publisher = publisher;
     this.copyEditor = copyEditor;
     this.pages = pages;
-    this.issn = issn;
+    this.borrowed = borrowed;
     this.issueNumber = issueNumber;
     this.publicationDate = publicationDate;
+    this.issn = issn;
   }
 
-  int getID() {
-    return id;
+  Magazine(String title, String type, Publisher publisher, CopyEditor copyEditor, int pages,
+      boolean borrowed, int issueNumber, LocalDate publicationDate, int issn) {
+    super(title, pages, borrowed, publicationDate);
+
+    this.title = title;
+    this.type = type;
+    this.publisher = publisher;
+    this.copyEditor = copyEditor;
+    this.pages = pages;
+    this.borrowed = borrowed;
+    this.issueNumber = issueNumber;
+    this.publicationDate = publicationDate;
+    this.issn = issn;
   }
 
   public String getOverviewText() {
-    return "\nISSN: " + issn + "\nTitle: " + title + "\nIssue: " + issueNumber;
+    return "\nISSN: " + issn + "\nTitle: " + title + "\nType: " + type + "\nIssue: " + issueNumber
+        + "\n";
   }
 
-  public void borrow() {
-    borrowed = true;
-    borrowTime = 2;
-    System.out.println("Magazine has been borrowed.");
+  int getId() {
+    return id;
   }
 
-  public void returnn() {
-    borrowed = false;
-    borrowTime = 0;
-    System.out.println("Magazine has been returned.");
+  public void setId(int id) {
+    this.id = id;
+  }
+
+  String getTitle() {
+    return title;
+  }
+
+  String getType() {
+    return type;
+  }
+
+  Publisher getPublisher() {
+    return publisher;
+  }
+
+  CopyEditor getCopyEditor() {
+    return copyEditor;
+  }
+
+  int getPages() {
+    return pages;
+  }
+
+  int getIssn() {
+    return issn;
+  }
+
+  int getIssueNumber() {
+    return issueNumber;
+  }
+
+  LocalDate getPublicationDate() {
+    return publicationDate;
   }
 
   public boolean hasBeenBorrowed() {
     return borrowed;
   }
+
+  //  public void borrow() {
+//    borrowed = true;
+//    borrowTime = 2;
+//    System.out.println("Magazine has been borrowed.");
+//  }
+//
+//  public void returnn() {
+//    borrowed = false;
+//    borrowTime = 0;
+//    System.out.println("Magazine has been returned.");
+//  }
+
 }
