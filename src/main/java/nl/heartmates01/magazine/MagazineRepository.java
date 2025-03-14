@@ -1,84 +1,209 @@
 package nl.heartmates01.magazine;
 
-import java.util.List;
-import java.time.LocalDate;
+import static nl.heartmates01.main.Main.publisherRepository;
+import static nl.heartmates01.main.Main.copyEditorRepository;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.function.Predicate;
+import java.util.List;
+import java.util.Optional;
+import nl.heartmates01.main.JdbcSingleton;
 
 public class MagazineRepository {
 
-  // dailymag
+  private final JdbcSingleton jdbcSingleton = JdbcSingleton.getInstance();
 
-  public static List<Magazine> allMags = new ArrayList<>();
+  public List<Magazine> add(Magazine... magazines) {
 
-  void addDailyMag(int id, String title, String publisher, String copyEditor, int pages,
-      boolean borrowed, int borrowTime,
-      String issn, int issueNumber, LocalDate publicationDate) {
-    allMags.add(
-        new DailyMag(id, title, publisher, copyEditor, pages, borrowed, borrowTime, issn,
-            issueNumber,
-            publicationDate));
-  }
+    if (magazines.length == 0) {
+      return new ArrayList<>();
+    }
 
-  List<Magazine> getDailyMags() {
-    return allMags.stream().filter(DailyMag.class::isInstance).toList();
-  }
+    StringBuilder multipleInserts = new StringBuilder();
+    List<Object> parameters = new ArrayList<>();
+    String insertQueryString = "INSERT INTO magazines (id, pubId, type, copyId, pages, title, borrowed, publicationDate, issueNumber, issn) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-  // weeklymag
+    int magIndex = 0;
+    for (Magazine magazine : magazines) {
+      if (magazines.length > 1 && magIndex == 0) {
+        multipleInserts.append(",");
+      }
+      multipleInserts.append(insertQueryString);
 
-  void addWeeklyMag(int id, String title, String publisher, String copyEditor, int pages,
-      boolean borrowed, int borrowTime,
-      String issn, int issueNumber, LocalDate publicationDate) {
-    allMags.add(
-        new WeeklyMag(id, title, publisher, copyEditor, pages, borrowed, borrowTime, issn,
-            issueNumber,
-            publicationDate));
-  }
+      parameters.addAll(List.of(
+          magazine.getId(),
+          magazine.getPublisher().getId(),
+          magazine.getType(),
+          magazine.getCopyEditor().getId(),
+          magazine.getPages(),
+          magazine.getTitle(),
+          magazine.hasBeenBorrowed(),
+          magazine.getPublicationDate(),
+          magazine.getIssueNumber(),
+          magazine.getIssn()
+      ));
+      magIndex++;
 
-  List<Magazine> getWeeklyMags() {
-    return allMags.stream().filter(WeeklyMag.class::isInstance).toList();
-  }
+      List<Integer> ids;
+      try {
+        ids = jdbcSingleton.insertQuery(multipleInserts.toString(), parameters.toArray());
 
-  // monthlymag
+        for (int i = 1; i <= ids.size(); i++) {
+          magazine.setId(ids.get(i));
+        }
 
-  void addMonthlyMag(int id, String title, String publisher, String copyEditor, int pages,
-      boolean borrowed, int borrowTime,
-      String issn, int issueNumber, LocalDate publicationDate) {
-    allMags.add(
-        new MonthlyMag(id, title, publisher, copyEditor, pages, borrowed, borrowTime, issn,
-            issueNumber,
-            publicationDate));
-  }
-
-  List<Magazine> getMonthlyMags() {
-    return allMags.stream().filter(MonthlyMag.class::isInstance).toList();
-  }
-
-  public Magazine findID(int id) {
-    for (Magazine magazine : allMags) {
-      if (id == magazine.getID()) {
-        return magazine;
+      } catch (SQLException e) {
+        //
       }
     }
-    return null;
+    return List.of(magazines);
   }
 
-  void removeMag(int id) {
-    Magazine foundMag = findID(id);
-    if (foundMag != null) {
-      allMags.remove(foundMag);
+  public int delete(int id) {
+    int result = id;
+    try {
+      result = jdbcSingleton.deleteQuery("DELETE FROM magazines WHERE id = ?", id);
+    } catch (SQLException e) {
+      //
     }
+    return result;
   }
 
-  List<Magazine> getAll() {
-    return allMags;
+  public Optional<Magazine> get(int id) {
+    Optional<ResultSet> result = Optional.empty();
+    try {
+      result = jdbcSingleton.selectQuery("SELECT * FROM magazine WHERE id = ?", id);
+    } catch (SQLException e) {
+      //
+    }
+    if (result.isEmpty()) {
+      return Optional.empty();
+    }
+    ResultSet resultSet = result.get();
+    try {
+      resultSet.next();
+      return Optional.of(new Magazine(
+          resultSet.getInt("id"),
+          resultSet.getString("title"),
+          resultSet.getString("type"),
+          publisherRepository.get(resultSet.getInt("pubId")).get(),
+          copyEditorRepository.get(resultSet.getInt("copyId")).get(),
+          resultSet.getInt("pages"),
+          resultSet.getBoolean("borrowed"),
+          resultSet.getInt("issueNumber"),
+          resultSet.getDate("publicationDate").toLocalDate(),
+          resultSet.getInt("issn")
+      ));
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+    return Optional.empty();
   }
 
-  List<Magazine> getBorrowedMags() {
-    return allMags.stream().filter(Magazine::hasBeenBorrowed).toList();
+  public List<Magazine> getAll() {
+    Optional<ResultSet> results = Optional.empty();
+    try {
+      results = jdbcSingleton.selectQuery("SELECT * FROM magazines");
+    } catch (SQLException e) {
+      //
+    }
+
+    if (results.isEmpty()) {
+      return new ArrayList<>();
+    }
+    // converts to list of books
+    ResultSet resultSet = results.get();
+    List<Magazine> magazines = new ArrayList<>();
+    try {
+      while (resultSet.next()) {
+        magazines.add(new Magazine(
+            resultSet.getInt("id"),
+            resultSet.getString("title"),
+            resultSet.getString("type"),
+            publisherRepository.get(resultSet.getInt("pubId")).get(),
+            copyEditorRepository.get(resultSet.getInt("copyId")).get(),
+            resultSet.getInt("pages"),
+            resultSet.getBoolean("borrowed"),
+            resultSet.getInt("issueNumber"),
+            resultSet.getDate("publicationDate").toLocalDate(),
+            resultSet.getInt("issn")
+        ));
+      }
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+    return magazines;
   }
 
-  List<Magazine> getAvailableMags() {
-    return allMags.stream().filter(Predicate.not(Magazine::hasBeenBorrowed)).toList();
+  public Optional<List<Magazine>> searchPub(int publisher) {
+    Optional<ResultSet> results = Optional.empty();
+    try {
+      results = jdbcSingleton.selectQuery("SELECT * FROM magazines WHERE pubId = ?",
+          publisher);
+    } catch (SQLException e) {
+      //
+    }
+
+    if (results.isEmpty()) {
+      return Optional.empty();
+    }
+    ResultSet resultSet = results.get();
+    List<Magazine> magazines = new ArrayList<>();
+    try {
+      while (resultSet.next()) {
+        magazines.add(new Magazine(
+            resultSet.getInt("id"),
+            resultSet.getString("title"),
+            resultSet.getString("type"),
+            publisherRepository.get(resultSet.getInt("pubId")).get(),
+            copyEditorRepository.get(resultSet.getInt("copyId")).get(),
+            resultSet.getInt("pages"),
+            resultSet.getBoolean("borrowed"),
+            resultSet.getInt("issueNumber"),
+            resultSet.getDate("publicationDate").toLocalDate(),
+            resultSet.getInt("issn")
+        ));
+      }
+    } catch (SQLException e) {
+      //
+    }
+    return Optional.of(magazines);
+  }
+
+
+  public Optional<List<Magazine>> searchCopy(int publisher) {
+    Optional<ResultSet> results = Optional.empty();
+    try {
+      results = jdbcSingleton.selectQuery("SELECT * FROM magazines WHERE copyId = ?",
+          publisher);
+    } catch (SQLException e) {
+      //
+    }
+
+    if (results.isEmpty()) {
+      return Optional.empty();
+    }
+    ResultSet resultSet = results.get();
+    List<Magazine> magazines = new ArrayList<>();
+    try {
+      while (resultSet.next()) {
+        magazines.add(new Magazine(
+            resultSet.getInt("id"),
+            resultSet.getString("title"),
+            resultSet.getString("type"),
+            publisherRepository.get(resultSet.getInt("pubId")).get(),
+            copyEditorRepository.get(resultSet.getInt("copyId")).get(),
+            resultSet.getInt("pages"),
+            resultSet.getBoolean("borrowed"),
+            resultSet.getInt("issueNumber"),
+            resultSet.getDate("publicationDate").toLocalDate(),
+            resultSet.getInt("issn")
+        ));
+      }
+    } catch (SQLException e) {
+      //
+    }
+    return Optional.of(magazines);
   }
 }
