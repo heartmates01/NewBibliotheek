@@ -60,7 +60,6 @@ public class Main {
     return scanner.nextLine();
   }
 
-  // don't know if userInput will still be necessary but i'll keep it here for now
   public static String userInput(String question, Pattern pattern, String errorMessage) {
     System.out.println(question);
 
