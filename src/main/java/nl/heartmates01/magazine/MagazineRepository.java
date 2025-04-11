@@ -38,7 +38,7 @@ public class MagazineRepository {
           magazine.getCopyEditor().getId(),
           magazine.getPages(),
           magazine.getTitle(),
-          magazine.hasBeenBorrowed(),
+          magazine.getBorrowed(),
           magazine.getPublicationDate(),
           magazine.getIssueNumber(),
           magazine.getIssn()
@@ -73,7 +73,7 @@ public class MagazineRepository {
   public Optional<Magazine> get(int id) {
     Optional<ResultSet> result = Optional.empty();
     try {
-      result = jdbcSingleton.selectQuery("SELECT * FROM magazine WHERE id = ?", id);
+      result = jdbcSingleton.selectQuery("SELECT * FROM magazines WHERE id = ?", id);
     } catch (SQLException e) {
       //
     }
@@ -96,7 +96,7 @@ public class MagazineRepository {
           resultSet.getInt("issn")
       ));
     } catch (SQLException e) {
-      e.printStackTrace();
+      //
     }
     return Optional.empty();
   }
@@ -131,22 +131,24 @@ public class MagazineRepository {
         ));
       }
     } catch (SQLException e) {
-      e.printStackTrace();
+      //
     }
     return magazines;
   }
 
-  public Optional<List<Magazine>> searchPub(int publisher) {
+  public List<Magazine> search(String keyword) {
     Optional<ResultSet> results = Optional.empty();
     try {
-      results = jdbcSingleton.selectQuery("SELECT * FROM magazines WHERE pubId = ?",
-          publisher);
+      results = jdbcSingleton.selectQuery(
+          "SELECT magazines.* FROM magazines LEFT JOIN publishers ON publishers.pubId = magazines.pubId WHERE title LIKE CONCAT ('%', ?, '%') OR publishers.name LIKE CONCAT ('%', ? '%')",
+          keyword, keyword);
     } catch (SQLException e) {
       //
     }
 
     if (results.isEmpty()) {
-      return Optional.empty();
+      System.out.println("No results found for Magazines.");
+      return new ArrayList<>();
     }
     ResultSet resultSet = results.get();
     List<Magazine> magazines = new ArrayList<>();
@@ -168,42 +170,6 @@ public class MagazineRepository {
     } catch (SQLException e) {
       //
     }
-    return Optional.of(magazines);
-  }
-
-
-  public Optional<List<Magazine>> searchCopy(int publisher) {
-    Optional<ResultSet> results = Optional.empty();
-    try {
-      results = jdbcSingleton.selectQuery("SELECT * FROM magazines WHERE copyId = ?",
-          publisher);
-    } catch (SQLException e) {
-      //
-    }
-
-    if (results.isEmpty()) {
-      return Optional.empty();
-    }
-    ResultSet resultSet = results.get();
-    List<Magazine> magazines = new ArrayList<>();
-    try {
-      while (resultSet.next()) {
-        magazines.add(new Magazine(
-            resultSet.getInt("id"),
-            resultSet.getString("title"),
-            resultSet.getString("type"),
-            publisherRepository.get(resultSet.getInt("pubId")).get(),
-            copyEditorRepository.get(resultSet.getInt("copyId")).get(),
-            resultSet.getInt("pages"),
-            resultSet.getBoolean("borrowed"),
-            resultSet.getInt("issueNumber"),
-            resultSet.getDate("publicationDate").toLocalDate(),
-            resultSet.getInt("issn")
-        ));
-      }
-    } catch (SQLException e) {
-      //
-    }
-    return Optional.of(magazines);
+    return magazines;
   }
 }
