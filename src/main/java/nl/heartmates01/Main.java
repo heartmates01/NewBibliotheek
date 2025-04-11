@@ -3,7 +3,9 @@ package nl.heartmates01.main;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
-import java.util.regex.Pattern;
+
+import nl.heartmates01.boardgame.BoardgameRepository;
+import nl.heartmates01.boardgame.BoardgameController;
 import nl.heartmates01.book.AuthorRepository;
 import nl.heartmates01.book.BookController;
 import nl.heartmates01.book.BookRepository;
@@ -14,6 +16,7 @@ import nl.heartmates01.magazine.MagazineRepository;
 import nl.heartmates01.book.AuthorController;
 import nl.heartmates01.magazine.PublisherController;
 import nl.heartmates01.magazine.PublisherRepository;
+import nl.heartmates01.library.ItemController;
 
 public class Main {
 
@@ -22,15 +25,19 @@ public class Main {
   public static final AuthorRepository authorRepository = new AuthorRepository();
   public static final PublisherRepository publisherRepository = new PublisherRepository();
   public static final CopyEditorRepository copyEditorRepository = new CopyEditorRepository();
-
+  public static final BoardgameRepository boardgameRepository = new BoardgameRepository();
+  
   static final Scanner scanner = new Scanner(System.in);
 
   static final List<Map<String, Runnable>> options = List.of(
       Map.of("Manage Books", BookController::showBookMenu),
       Map.of("Manage Authors", AuthorController::showAuthorMenu),
+      Map.of("Manage Boardgames", BoardgameController::showGameMenu),
       Map.of("Manage Magazines", MagazineController::showMagazineMenu),
       Map.of("Manage Publishers", PublisherController::showPublisherMenu),
       Map.of("Manage Copy Editors", CopyEditorController::showCopyMenu),
+      Map.of("Show All", ItemController::showAll),
+      Map.of("Search Through All by Keyword", ItemController::search),
       Map.of("Exit", () -> System.exit(0))
   );
 
@@ -55,20 +62,9 @@ public class Main {
     options.get(index).values().forEach(Runnable::run);
   }
 
+  // for forms
   public static String getUserInput(String question) {
     System.out.println(question);
-    return scanner.nextLine();
-  }
-
-  public static String userInput(String question, Pattern pattern, String errorMessage) {
-    System.out.println(question);
-
-    if (pattern != null) {
-      while (!scanner.hasNext(pattern)) {
-        System.out.println(errorMessage);
-        scanner.next();
-      }
-    }
     return scanner.nextLine();
   }
 }
