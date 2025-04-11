@@ -1,13 +1,14 @@
 package nl.heartmates01.book;
 
 import static nl.heartmates01.main.Main.authorRepository;
+import static nl.heartmates01.main.Main.publisherRepository;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import nl.heartmates01.main.JdbcSingleton;
 import java.sql.ResultSet;
+import nl.heartmates01.main.JdbcSingleton;
 
 public class BookRepository {
 
@@ -22,7 +23,7 @@ public class BookRepository {
 
     StringBuilder multipleInserts = new StringBuilder();
     List<Object> parameters = new ArrayList<>();
-    String insertQueryString = "INSERT INTO books (id, title, authorId, pages, borrowed, isbn, publicationDate) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    String insertQueryString = "INSERT INTO books (id, title, authorId, pages, borrowed, isbn, publicationDate, pubId) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
     int bookIndex = 0;
     for (Book book : books) {
@@ -39,7 +40,8 @@ public class BookRepository {
           book.getPages(),
           book.getBorrowed(),
           book.getIsbn(),
-          book.getPublicationDate()
+          book.getPublicationDate(),
+          book.getPublisher().getId()
       ));
       bookIndex++;
 
@@ -91,7 +93,8 @@ public class BookRepository {
           resultSet.getInt("pages"),
           resultSet.getBoolean("borrowed"),
           resultSet.getLong("isbn"),
-          resultSet.getDate("publicationDate").toLocalDate()
+          resultSet.getDate("publicationDate").toLocalDate(),
+          publisherRepository.get(resultSet.getInt("pubId")).get()
       ));
     } catch (SQLException e) {
       e.printStackTrace();
@@ -123,27 +126,29 @@ public class BookRepository {
             resultSet.getInt("pages"),
             resultSet.getBoolean("borrowed"),
             resultSet.getLong("isbn"),
-            resultSet.getDate("publicationDate").toLocalDate()
+            resultSet.getDate("publicationDate").toLocalDate(),
+            publisherRepository.get(resultSet.getInt("pubId")).get()
         ));
       }
     } catch (SQLException e) {
-      e.printStackTrace();
+      //
     }
     return books;
   }
 
   // search all by author
-  public Optional<List<Book>> search(int author) {
+  public List<Book> search(String keyword) {
     Optional<ResultSet> results = Optional.empty();
     try {
-      results = jdbcSingleton.selectQuery("SELECT * FROM books WHERE authorId = ?",
-          author);
+      results = jdbcSingleton.selectQuery(
+          "SELECT books.* FROM books LEFT JOIN authors ON authors.authorId = books.authorId WHERE title LIKE  CONCAT('%', ?, '%') OR authors.name LIKE CONCAT ('%', ?, '%')",
+          keyword, keyword);
     } catch (SQLException e) {
-      //
+      System.out.println(e);
     }
-
     if (results.isEmpty()) {
-      return Optional.empty();
+      System.out.println("No results found for Books.");
+      return new ArrayList<>();
     }
     ResultSet resultSet = results.get();
     List<Book> books = new ArrayList<>();
@@ -156,12 +161,13 @@ public class BookRepository {
             resultSet.getInt("pages"),
             resultSet.getBoolean("borrowed"),
             resultSet.getLong("isbn"),
-            resultSet.getDate("publicationDate").toLocalDate()
+            resultSet.getDate("publicationDate").toLocalDate(),
+            publisherRepository.get(resultSet.getInt("pubId")).get()
         ));
       }
     } catch (SQLException e) {
-      e.printStackTrace();
+      //
     }
-    return Optional.of(books);
+    return books;
   }
 }
