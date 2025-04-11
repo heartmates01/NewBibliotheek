@@ -11,13 +11,17 @@ import nl.heartmates01.main.Main;
 
 public class MagazineController {
 
+  //sonarqube recommended this
+  private MagazineController() {
+    throw new IllegalStateException("Utility class MagazineController; java:S1118");
+  }
+
   static final List<Map<String, Runnable>> magazineOptions = List.of(
       Map.of("Add a Magazine", MagazineController::addMag),
       Map.of("Remove a Magazine", MagazineController::removeMag),
-      Map.of("List singular Magazine", MagazineController::listSingular),
-      Map.of("List all Magazines", MagazineController::listAllMags),
-      Map.of("Search Magazines by Publisher", MagazineController::searchByPub),
-      Map.of("Search Magazines by Copy Editor", MagazineController::searchByCopy),
+      Map.of("List Singular Magazine", MagazineController::listSingular),
+      Map.of("List All Magazines", MagazineController::listAllMags),
+      Map.of("Search Magazines by Keyword", MagazineController::searchByKeyword),
       Map.of("Exit", () -> System.exit(0))
   );
 
@@ -27,7 +31,7 @@ public class MagazineController {
 
   public static void showMagazineMenu() {
     while (true) {
-      System.out.println("Choose an option:");
+      System.out.println("Choose an option: ");
       for (int i = 0; i < magazineOptions.size(); i++) {
         System.out.println(i + ". " + magazineOptions.get(i).keySet().iterator().next());
       }
@@ -71,19 +75,9 @@ public class MagazineController {
     magazineRepository.getAll().forEach(magazine -> System.out.println(magazine.getOverviewText()));
   }
 
-  public static void searchByPub() {
-    int publisher = Integer.parseInt(Main.getUserInput("Enter the publisher's ID: "));
-    magazineRepository.searchPub(publisher)
-        .ifPresentOrElse(magazines -> magazines.forEach(
-                magazine -> System.out.println(magazine.getOverviewText())),
-            () -> System.out.println("Magazine not found."));
-  }
-
-  public static void searchByCopy() {
-    int copyEditor = Integer.parseInt(Main.getUserInput("Enter the publisher's ID: "));
-    magazineRepository.searchCopy(copyEditor)
-        .ifPresentOrElse(magazines -> magazines.forEach(
-                magazine -> System.out.println(magazine.getOverviewText())),
-            () -> System.out.println("Magazine not found."));
+  public static void searchByKeyword() {
+    String keyword = Main.getUserInput("Enter the Keyword: ");
+    magazineRepository.search(keyword)
+        .forEach(magazine -> System.out.println(magazine.getOverviewText()));
   }
 }
