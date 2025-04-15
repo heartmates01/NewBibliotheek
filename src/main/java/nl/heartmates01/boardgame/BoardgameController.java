@@ -19,6 +19,7 @@ public class BoardgameController {
       Map.of("Add a Boardgame", BoardgameController::addGame),
       Map.of("Remove a Boardgame", BoardgameController::removeGame),
       Map.of("List Singular Boardgame", BoardgameController::listSingular),
+      Map.of("Borrow or Return Boardgame", BoardgameController::borrowOrReturn),
       Map.of("List All Boardgames", BoardgameController::listAll),
       Map.of("Search Boardgames by Keyword", BoardgameController::searchByKeyword),
       Map.of("Exit", () -> System.exit(0))
@@ -67,6 +68,14 @@ public class BoardgameController {
     boardgameRepository.get(id)
         .ifPresentOrElse(boardgame -> System.out.println(boardgame.getOverviewText()),
             () -> System.out.println("Boardgame not found."));
+  }
+
+  public static void borrowOrReturn() {
+    System.out.println(
+        "This will invert the boolean's value, so borrowed becomes returned & returned becomes borrowed.");
+    int id = Integer.parseInt(Main.getUserInput("Enter this boardgame's ID: "));
+    boardgameRepository.borrowOrReturnGame(id);
+    System.out.println("Done!");
   }
 
   public static void listAll() {
