@@ -18,13 +18,13 @@ public class JdbcSingleton {
 
   private final Connection con;
 
+  // creates connection
   private JdbcSingleton() {
     try {
       con = DriverManager.getConnection("jdbc:mysql://localhost:3306/mariadb", "root",
           "WW@mariadb#01");
     } catch (SQLException e) {
-      System.out.println("Database hasn't been started yet.");
-      throw new RuntimeException(e);
+      throw new IllegalStateException("Database hasn't been started yet.");
     }
   }
 
@@ -55,6 +55,7 @@ public class JdbcSingleton {
 
   // select
   public Optional<ResultSet> selectQuery(String sql) throws SQLException {
+    // java::S2095; connection automatically closes after being used in repositories
     Statement prepStatement = con.createStatement();
     ResultSet resultSet = prepStatement.executeQuery(sql);
 
@@ -62,12 +63,17 @@ public class JdbcSingleton {
   }
 
   // select w/ where param
-
   public Optional<ResultSet> selectQuery(String sql, Object... parameters) throws SQLException {
     PreparedStatement prepStatement = con.prepareStatement(sql);
     ResultSet resultSet = prepareStatement(prepStatement, parameters).executeQuery();
 
     return resultSet.isBeforeFirst() ? Optional.of(resultSet) : Optional.empty();
+  }
+
+  //update query for borrow/return
+  public int updateQuery(String sql, Object... parameters) throws SQLException {
+    PreparedStatement prepStatement = con.prepareStatement(sql);
+    return prepareStatement(prepStatement, parameters).executeUpdate();
   }
 
   // insert
@@ -93,7 +99,6 @@ public class JdbcSingleton {
   // delete
   public int deleteQuery(String sql, Object... parameters) throws SQLException {
     PreparedStatement prepStatement = con.prepareStatement(sql);
-
     return prepareStatement(prepStatement, parameters).executeUpdate();
   }
 }
