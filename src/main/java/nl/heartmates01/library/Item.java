@@ -9,10 +9,4 @@ public abstract class Item {
   }
 
   public abstract String getOverviewText();
-
-  protected void borrow() {
-  }
-
-  protected void returnn() {
-  }
 }
