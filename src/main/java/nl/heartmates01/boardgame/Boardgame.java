@@ -95,14 +95,4 @@ public class Boardgame extends Item {
   boolean getBorrowed() {
     return borrowed;
   }
-
-  public void borrow() {
-    borrowed = true;
-    System.out.println("Boardgame has been borrowed.");
-  }
-
-  public void returnn() {
-    borrowed = false;
-    System.out.println("Boardgame has been returned.");
-  }
 }
