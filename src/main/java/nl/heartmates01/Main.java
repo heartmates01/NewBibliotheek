@@ -26,7 +26,7 @@ public class Main {
   public static final PublisherRepository publisherRepository = new PublisherRepository();
   public static final CopyEditorRepository copyEditorRepository = new CopyEditorRepository();
   public static final BoardgameRepository boardgameRepository = new BoardgameRepository();
-  
+
   static final Scanner scanner = new Scanner(System.in);
 
   static final List<Map<String, Runnable>> options = List.of(
