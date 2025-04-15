@@ -3,7 +3,6 @@ package nl.heartmates01.magazine;
 import java.time.LocalDate;
 import nl.heartmates01.library.Item;
 
-// overerft Item
 public class Magazine extends Item {
 
   protected int id;
@@ -97,17 +96,4 @@ public class Magazine extends Item {
   public boolean hasBeenBorrowed() {
     return borrowed;
   }
-
-  //  public void borrow() {
-//    borrowed = true;
-//    borrowTime = 2;
-//    System.out.println("Magazine has been borrowed.");
-//  }
-//
-//  public void returnn() {
-//    borrowed = false;
-//    borrowTime = 0;
-//    System.out.println("Magazine has been returned.");
-//  }
-
 }
