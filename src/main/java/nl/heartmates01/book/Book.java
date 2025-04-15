@@ -3,7 +3,6 @@ package nl.heartmates01.book;
 import java.time.LocalDate;
 import nl.heartmates01.library.Item;
 
-// overerft Item
 public class Book extends Item {
 
   protected int id;
@@ -90,18 +89,4 @@ public class Book extends Item {
         + "Pages = " + pages + "\n" + "ISBN = " + isbn + "\n" + "Borrowed = " + borrowed + "\n"
         + "Publication Date = " + publicationDate + "\n";
   }
-  
-  // ill add borrow & return soon promise.
-
-//  public void borrow() {
-//    borrowed = true;
-//    borrowTime = 14;
-//    System.out.println("Book has been borrowed.");
-//  }
-//
-//  public void returnn() {
-//    borrowed = false;
-//    borrowTime = 0;
-//    System.out.println("Book has been returned.");
-//  }
 }
