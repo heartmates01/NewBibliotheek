@@ -71,6 +71,17 @@ public class BookRepository {
     return result;
   }
 
+  //borrowOrReturn
+  public int borrowOrReturnBook(int id) {
+    int result = id;
+    try {
+      result = jdbcSingleton.updateQuery("UPDATE books SET borrowed = NOT borrowed WHERE id = ?",
+          id);
+    } catch (SQLException e) {
+      //
+    }
+    return result;
+  }
 
   // get singular from id
   public Optional<Book> get(int id) {
