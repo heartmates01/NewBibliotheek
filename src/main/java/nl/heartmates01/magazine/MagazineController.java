@@ -11,7 +11,7 @@ import nl.heartmates01.main.Main;
 
 public class MagazineController {
 
-  //sonarqube recommended this
+  //sonarqube recommended this (||-,-)
   private MagazineController() {
     throw new IllegalStateException("Utility class MagazineController; java:S1118");
   }
@@ -20,6 +20,7 @@ public class MagazineController {
       Map.of("Add a Magazine", MagazineController::addMag),
       Map.of("Remove a Magazine", MagazineController::removeMag),
       Map.of("List Singular Magazine", MagazineController::listSingular),
+      Map.of("Borrow or Return Magazine", MagazineController::borrowOrReturn),
       Map.of("List All Magazines", MagazineController::listAllMags),
       Map.of("Search Magazines by Keyword", MagazineController::searchByKeyword),
       Map.of("Exit", () -> System.exit(0))
@@ -69,6 +70,14 @@ public class MagazineController {
     magazineRepository.get(id)
         .ifPresentOrElse(magazine -> System.out.println(magazine.getOverviewText()),
             () -> System.out.println("Magazine not found."));
+  }
+
+  public static void borrowOrReturn() {
+    System.out.println(
+        "This will invert the boolean's value, so borrowed becomes returned & returned becomes borrowed.");
+    int id = Integer.parseInt(Main.getUserInput("Enter this magazine's ID: "));
+    magazineRepository.borrowOrReturnMag(id);
+    System.out.println("Done!");
   }
 
   public static void listAllMags() {
