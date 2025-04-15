@@ -68,6 +68,18 @@ public class BoardgameRepository {
     return result;
   }
 
+  public int borrowOrReturnGame(int id) {
+    int result = id;
+    try {
+      result = jdbcSingleton.updateQuery(
+          "UPDATE boardgames SET borrowed = NOT borrowed WHERE id = ?",
+          id);
+    } catch (SQLException e) {
+      //
+    }
+    return result;
+  }
+
   public Optional<Boardgame> get(int id) {
     Optional<ResultSet> result = Optional.empty();
     try {
