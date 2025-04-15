@@ -10,7 +10,7 @@ import nl.heartmates01.main.Main;
 
 public class BoardgameController {
 
-  //sonarcube recommended this (||-,-)
+  //sonarqube recommended this (||-,-)
   private BoardgameController() {
     throw new IllegalStateException("Utility class BoardController; java:S1118");
   }
