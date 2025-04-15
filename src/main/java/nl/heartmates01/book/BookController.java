@@ -11,7 +11,7 @@ import nl.heartmates01.main.Main;
 
 public class BookController {
 
-  //sonarqube recommended this
+  //sonarqube recommended this (||-,-)
   private BookController() {
     throw new IllegalStateException("Utility class BookController; java:S1118");
   }
@@ -65,14 +65,15 @@ public class BookController {
 
   public static void getFromId() {
     int id = Integer.parseInt(Main.getUserInput("Enter this book's ID: "));
-    bookRepository.get(id).ifPresent(book -> System.out.println(book.toString()));
+    bookRepository.get(id).ifPresent(book -> System.out.println(book));
   }
 
-  //'Book book' doesn't work 'cause of Optional
   public static void borrowOrReturn() {
+    System.out.println(
+        "This will invert the boolean's value, so borrowed becomes returned & returned becomes borrowed.");
     int id = Integer.parseInt(Main.getUserInput("Enter this book's ID: "));
-//    Book book = bookRepository.get(id);
-//    borrowController.borrowOrReturn(book);
+    bookRepository.borrowOrReturnBook(id);
+    System.out.println("Done!");
   }
 
   public static void listAllBooks() {
