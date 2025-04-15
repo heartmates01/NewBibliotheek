@@ -70,6 +70,19 @@ public class MagazineRepository {
     return result;
   }
 
+  //borrow or return
+  public int borrowOrReturnMag(int id) {
+    int result = id;
+    try {
+      result = jdbcSingleton.updateQuery(
+          "UPDATE magazines SET borrowed = NOT borrowed WHERE id = ?",
+          id);
+    } catch (SQLException e) {
+      //
+    }
+    return result;
+  }
+
   public Optional<Magazine> get(int id) {
     Optional<ResultSet> result = Optional.empty();
     try {
