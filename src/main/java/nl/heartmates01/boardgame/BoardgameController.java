@@ -10,7 +10,7 @@ import nl.heartmates01.main.Main;
 
 public class BoardgameController {
 
-  //sonarqube recommended this (||-,-)
+  //sonarcube recommended this
   private BoardgameController() {
     throw new IllegalStateException("Utility class BoardController; java:S1118");
   }
@@ -74,7 +74,7 @@ public class BoardgameController {
     System.out.println(
         "This will invert the boolean's value, so borrowed becomes returned & returned becomes borrowed.");
     int id = Integer.parseInt(Main.getUserInput("Enter this boardgame's ID: "));
-    boardgameRepository.borrowOrReturnGame(id);
+    boardgameRepository.borrowOrReturn(id);
     System.out.println("Done!");
   }
 
