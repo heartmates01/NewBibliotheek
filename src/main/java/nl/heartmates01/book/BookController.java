@@ -1,7 +1,7 @@
-package nl.heartmates01.magazine;
+package nl.heartmates01.book;
 
-import static nl.heartmates01.main.Main.copyEditorRepository;
-import static nl.heartmates01.main.Main.magazineRepository;
+import static nl.heartmates01.main.Main.authorRepository;
+import static nl.heartmates01.main.Main.bookRepository;
 import static nl.heartmates01.main.Main.publisherRepository;
 
 import java.time.LocalDate;
@@ -9,84 +9,79 @@ import java.util.List;
 import java.util.Map;
 import nl.heartmates01.main.Main;
 
-public class MagazineController {
+public class BookController {
 
   //sonarqube recommended this
-  private MagazineController() {
-    throw new IllegalStateException("Utility class MagazineController; java:S1118");
+  private BookController() {
+    throw new IllegalStateException("Utility class BookController; java:S1118");
   }
 
-  static final List<Map<String, Runnable>> magazineOptions = List.of(
-      Map.of("Add a Magazine", MagazineController::addMag),
-      Map.of("Remove a Magazine", MagazineController::removeMag),
-      Map.of("List Singular Magazine", MagazineController::listSingular),
-      Map.of("Borrow or Return Magazine", MagazineController::borrowOrReturn),
-      Map.of("List All Magazines", MagazineController::listAllMags),
-      Map.of("Search Magazines by Keyword", MagazineController::searchByKeyword),
+  static final List<Map<String, Runnable>> bookOptions = List.of(
+      Map.of("Add a Book", BookController::addBook),
+      Map.of("Remove a Book", BookController::removeBook),
+      Map.of("List singular Book", BookController::getFromId),
+      Map.of("Borrow or Return Book", BookController::borrowOrReturn),
+      Map.of("List all Books", BookController::listAllBooks),
+      Map.of("Search Books by Keyword", BookController::searchByKeyword),
       Map.of("Exit", () -> System.exit(0))
   );
 
-  private static void handleMagOptions(int index) {
-    magazineOptions.get(index).values().forEach(Runnable::run);
+  static void handleBookOptions(int index) {
+    bookOptions.get(index).values().forEach(Runnable::run);
   }
 
-  public static void showMagazineMenu() {
+  public static void showBookMenu() {
     while (true) {
-      System.out.println("Choose an option: ");
-      for (int i = 0; i < magazineOptions.size(); i++) {
-        System.out.println(i + ". " + magazineOptions.get(i).keySet().iterator().next());
+      System.out.println("Choose an option:");
+      for (int i = 0; i < bookOptions.size(); i++) {
+        System.out.println(i + ". " + bookOptions.get(i).keySet().iterator().next());
       }
       int option = Integer.parseInt(Main.getUserInput("Enter the option number: "));
 
-      handleMagOptions(option);
+      handleBookOptions(option);
     }
   }
 
-  public static void addMag() {
-    Map<String, Object> userInput = new MagazineForm().getMagInput();
+  public static void addBook() {
+    Map<String, Object> userInput = new BookForm().getUserInput();
 
-    magazineRepository.add(new Magazine(
+    bookRepository.add(new Book(
         (String) userInput.get("title"),
-        (String) userInput.get("type"),
-        publisherRepository.get((Integer) userInput.get("pubId")).get(),
-        copyEditorRepository.get((Integer) userInput.get("copyId")).get(),
+        authorRepository.get((Integer) userInput.get("authorId")).get(),
         (Integer) userInput.get("pages"),
         (Boolean) userInput.get("borrowed"),
-        (Integer) userInput.get("issueNumber"),
+        (Long) userInput.get("isbn"),
         (LocalDate) userInput.get("publicationDate"),
-        (Integer) userInput.get("issn")
+        publisherRepository.get((Integer) userInput.get("pubId")).get()
     ));
-    System.out.println(userInput.get("title") + " has been added");
+    System.out.println(userInput.get("title") + " has been added.");
   }
 
-  public static void removeMag() {
-    int id = Integer.parseInt(Main.getUserInput("Enter this magazine's ID: "));
-    magazineRepository.delete(id);
-    System.out.println("Magazine has been deleted.");
+  public static void removeBook() {
+    int id = Integer.parseInt(Main.getUserInput("Enter this book's ID: "));
+    bookRepository.delete(id);
+    System.out.println("Book has been deleted.");
   }
 
-  public static void listSingular() {
-    int id = Integer.parseInt(Main.getUserInput("Enter this magazine's ID: "));
-    magazineRepository.get(id)
-        .ifPresentOrElse(magazine -> System.out.println(magazine.getOverviewText()),
-            () -> System.out.println("Magazine not found."));
+  public static void getFromId() {
+    int id = Integer.parseInt(Main.getUserInput("Enter this book's ID: "));
+    bookRepository.get(id).ifPresent(book -> System.out.println(book));
   }
 
   public static void borrowOrReturn() {
     System.out.println(
         "This will invert the boolean's value, so borrowed becomes returned & returned becomes borrowed.");
-    int id = Integer.parseInt(Main.getUserInput("Enter this magazine's ID: "));
-    magazineRepository.borrowOrReturn(id);
+    int id = Integer.parseInt(Main.getUserInput("Enter this book's ID: "));
+    bookRepository.borrowOrReturn(id);
     System.out.println("Done!");
   }
 
-  public static void listAllMags() {
-    magazineRepository.getAll().forEach(magazine -> System.out.println(magazine.getOverviewText()));
+  public static void listAllBooks() {
+    bookRepository.getAll().forEach(book -> System.out.println(book.toString()));
   }
 
   public static void searchByKeyword() {
     String keyword = Main.getUserInput("Enter the Keyword: ");
-    magazineRepository.search(keyword)
-        .forEach(magazine -> System.out.println(magazine.getOverviewText()));
+    bookRepository.search(keyword).forEach(book -> System.out.println(book.toString()));
   }
 }
