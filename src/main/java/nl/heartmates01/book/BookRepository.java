@@ -1,81 +1,81 @@
-package nl.heartmates01.magazine;
+package nl.heartmates01.book;
 
+import static nl.heartmates01.main.Main.authorRepository;
 import static nl.heartmates01.main.Main.publisherRepository;
-import static nl.heartmates01.main.Main.copyEditorRepository;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.sql.ResultSet;
 import nl.heartmates01.main.JdbcSingleton;
 
-public class MagazineRepository {
+public class BookRepository {
 
   private final JdbcSingleton jdbcSingleton = JdbcSingleton.getInstance();
 
-  public List<Magazine> add(Magazine... magazines) {
+  // add
+  public List<Book> add(Book... books) {
 
-    if (magazines.length == 0) {
+    if (books.length == 0) {
       return new ArrayList<>();
     }
 
     StringBuilder multipleInserts = new StringBuilder();
     List<Object> parameters = new ArrayList<>();
-    String insertQueryString = "INSERT INTO magazines (id, pubId, type, copyId, pages, title, borrowed, publicationDate, issueNumber, issn) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    String insertQueryString = "INSERT INTO books (id, title, authorId, pages, borrowed, isbn, publicationDate, pubId) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
-    int magIndex = 0;
-    for (Magazine magazine : magazines) {
-      if (magazines.length > 1 && magIndex == 0) {
+    int bookIndex = 0;
+    for (Book book : books) {
+      if (books.length > 1 && bookIndex == 0) {
         multipleInserts.append(",");
       }
+
       multipleInserts.append(insertQueryString);
 
       parameters.addAll(List.of(
-          magazine.getId(),
-          magazine.getPublisher().getId(),
-          magazine.getType(),
-          magazine.getCopyEditor().getId(),
-          magazine.getPages(),
-          magazine.getTitle(),
-          magazine.getBorrowed(),
-          magazine.getPublicationDate(),
-          magazine.getIssueNumber(),
-          magazine.getIssn()
+          book.getId(),
+          book.getTitle(),
+          book.getAuthor().getId(),
+          book.getPages(),
+          book.getBorrowed(),
+          book.getIsbn(),
+          book.getPublicationDate(),
+          book.getPublisher().getId()
       ));
-      magIndex++;
+      bookIndex++;
 
       List<Integer> ids;
       try {
-        ids = jdbcSingleton.insertQuery(multipleInserts.toString(), parameters.toArray());
-
+        ids = jdbcSingleton.insertQuery(multipleInserts.toString(),
+            parameters.toArray());
         for (int i = 1; i <= ids.size(); i++) {
-          magazine.setId(ids.get(i));
+          book.setId(ids.get(i));
         }
-
       } catch (SQLException e) {
         //
       }
     }
-    return List.of(magazines);
+
+    return List.of(books);
   }
 
+  // remove
   public int delete(int id) {
     int result = id;
     try {
-      result = jdbcSingleton.deleteQuery("DELETE FROM magazines WHERE id = ?", id);
+      result = jdbcSingleton.deleteQuery("DELETE FROM books WHERE id = ?", id);
     } catch (SQLException e) {
       //
     }
     return result;
   }
 
-  //borrow or return
+  //borrowOrReturn
   public int borrowOrReturn(int id) {
     int result = id;
     try {
-      result = jdbcSingleton.updateQuery(
-          "UPDATE magazines SET borrowed = NOT borrowed WHERE id = ?",
+      result = jdbcSingleton.updateQuery("UPDATE books SET borrowed = NOT borrowed WHERE id = ?",
           id);
     } catch (SQLException e) {
       //
@@ -83,10 +83,11 @@ public class MagazineRepository {
     return result;
   }
 
-  public Optional<Magazine> get(int id) {
+  // get singular from id
+  public Optional<Book> get(int id) {
     Optional<ResultSet> result = Optional.empty();
     try {
-      result = jdbcSingleton.selectQuery("SELECT * FROM magazines WHERE id = ?", id);
+      result = jdbcSingleton.selectQuery("SELECT * FROM books WHERE id = ?", id);
     } catch (SQLException e) {
       //
     }
@@ -96,28 +97,27 @@ public class MagazineRepository {
     ResultSet resultSet = result.get();
     try {
       resultSet.next();
-      return Optional.of(new Magazine(
+      return Optional.of(new Book(
           resultSet.getInt("id"),
           resultSet.getString("title"),
-          resultSet.getString("type"),
-          publisherRepository.get(resultSet.getInt("pubId")).get(),
-          copyEditorRepository.get(resultSet.getInt("copyId")).get(),
+          authorRepository.get(resultSet.getInt("authorId")).get(),
           resultSet.getInt("pages"),
           resultSet.getBoolean("borrowed"),
-          resultSet.getInt("issueNumber"),
+          resultSet.getLong("isbn"),
           resultSet.getDate("publicationDate").toLocalDate(),
-          resultSet.getInt("issn")
+          publisherRepository.get(resultSet.getInt("pubId")).get()
       ));
     } catch (SQLException e) {
-      //
+      e.printStackTrace();
     }
     return Optional.empty();
   }
 
-  public List<Magazine> getAll() {
+  // get all
+  public List<Book> getAll() {
     Optional<ResultSet> results = Optional.empty();
     try {
-      results = jdbcSingleton.selectQuery("SELECT * FROM magazines");
+      results = jdbcSingleton.selectQuery("SELECT * FROM books");
     } catch (SQLException e) {
       //
     }
@@ -127,62 +127,58 @@ public class MagazineRepository {
     }
     // converts to list of books
     ResultSet resultSet = results.get();
-    List<Magazine> magazines = new ArrayList<>();
+    List<Book> books = new ArrayList<>();
     try {
       while (resultSet.next()) {
-        magazines.add(new Magazine(
+        books.add(new Book(
             resultSet.getInt("id"),
             resultSet.getString("title"),
-            resultSet.getString("type"),
-            publisherRepository.get(resultSet.getInt("pubId")).get(),
-            copyEditorRepository.get(resultSet.getInt("copyId")).get(),
+            authorRepository.get(resultSet.getInt("authorId")).get(),
             resultSet.getInt("pages"),
             resultSet.getBoolean("borrowed"),
-            resultSet.getInt("issueNumber"),
+            resultSet.getLong("isbn"),
             resultSet.getDate("publicationDate").toLocalDate(),
-            resultSet.getInt("issn")
+            publisherRepository.get(resultSet.getInt("pubId")).get()
         ));
       }
     } catch (SQLException e) {
       //
     }
-    return magazines;
+    return books;
   }
 
-  public List<Magazine> search(String keyword) {
+  // search all by author
+  public List<Book> search(String keyword) {
     Optional<ResultSet> results = Optional.empty();
     try {
       results = jdbcSingleton.selectQuery(
-          "SELECT magazines.* FROM magazines LEFT JOIN publishers ON publishers.pubId = magazines.pubId WHERE title LIKE CONCAT ('%', ?, '%') OR publishers.name LIKE CONCAT ('%', ? '%')",
+          "SELECT books.* FROM books LEFT JOIN authors ON authors.authorId = books.authorId WHERE title LIKE  CONCAT('%', ?, '%') OR authors.name LIKE CONCAT ('%', ?, '%')",
           keyword, keyword);
     } catch (SQLException e) {
-      //
+      System.out.println(e);
     }
-
     if (results.isEmpty()) {
-      System.out.println("No results found for Magazines.");
+      System.out.println("No results found for Books.");
       return new ArrayList<>();
     }
     ResultSet resultSet = results.get();
-    List<Magazine> magazines = new ArrayList<>();
+    List<Book> books = new ArrayList<>();
     try {
       while (resultSet.next()) {
-        magazines.add(new Magazine(
+        books.add(new Book(
             resultSet.getInt("id"),
             resultSet.getString("title"),
-            resultSet.getString("type"),
-            publisherRepository.get(resultSet.getInt("pubId")).get(),
-            copyEditorRepository.get(resultSet.getInt("copyId")).get(),
+            authorRepository.get(resultSet.getInt("authorId")).get(),
             resultSet.getInt("pages"),
             resultSet.getBoolean("borrowed"),
-            resultSet.getInt("issueNumber"),
+            resultSet.getLong("isbn"),
             resultSet.getDate("publicationDate").toLocalDate(),
-            resultSet.getInt("issn")
+            publisherRepository.get(resultSet.getInt("pubId")).get()
         ));
       }
     } catch (SQLException e) {
       //
     }
-    return magazines;
+    return books;
   }
 }
