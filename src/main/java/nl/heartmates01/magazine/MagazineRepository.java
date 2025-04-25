@@ -71,7 +71,7 @@ public class MagazineRepository {
   }
 
   //borrow or return
-  public int borrowOrReturnMag(int id) {
+  public int borrowOrReturn(int id) {
     int result = id;
     try {
       result = jdbcSingleton.updateQuery(
