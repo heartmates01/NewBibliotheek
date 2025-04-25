@@ -11,7 +11,7 @@ import nl.heartmates01.main.Main;
 
 public class MagazineController {
 
-  //sonarqube recommended this (||-,-)
+  //sonarqube recommended this
   private MagazineController() {
     throw new IllegalStateException("Utility class MagazineController; java:S1118");
   }
