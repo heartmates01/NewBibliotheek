@@ -68,7 +68,7 @@ public class BoardgameRepository {
     return result;
   }
 
-  public int borrowOrReturnGame(int id) {
+  public int borrowOrReturn(int id) {
     int result = id;
     try {
       result = jdbcSingleton.updateQuery(
